@@ -2,7 +2,7 @@
     "codeSize": 15,
     "messageSize": 11,
     "symbolSize": 4,
-    "fieldGenerator": 25
+    "fieldGenerator": 25,
     "encoding" : "hex",
     "inputFile": "input.txt",
     "errerFile": "error.txt",
