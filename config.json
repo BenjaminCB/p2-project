@@ -1,0 +1,9 @@
+{
+    "codeSize": 15,
+    "messageSize": 11,
+    "symbolSize": 4,
+    "encoding" : "hex",
+    "inputFile": "input.txt",
+    "errerFile": "error.txt",
+    "outputFile": "output.txt"
+}
