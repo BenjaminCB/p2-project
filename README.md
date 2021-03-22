@@ -22,7 +22,7 @@ p2-project
 - config.json
 
 # Naming 
-- constants LIKE_THIS
+- constants in SCREAMING_CASE
 - variables in camelCase
 - date structures PascalCase
 
