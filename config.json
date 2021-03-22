@@ -2,6 +2,7 @@
     "codeSize": 15,
     "messageSize": 11,
     "symbolSize": 4,
+    "fieldGenerator": 25 //equivelent 11001, might need some other way to parse this
     "encoding" : "hex",
     "inputFile": "input.txt",
     "errerFile": "error.txt",
