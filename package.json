@@ -1,0 +1,19 @@
+{
+  "name": "p2-project",
+  "version": "1.0.0",
+  "description": "Source code for p2-project",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BenjaminCB/p2-project.git"
+  },
+  "author": "datB2-26 (AAU Spring 2021)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BenjaminCB/p2-project/issues"
+  },
+  "homepage": "https://github.com/BenjaminCB/p2-project#readme"
+}
