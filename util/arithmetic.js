@@ -26,3 +26,14 @@ function polyDivision(dividend, divisor) {
 
     return polyDivision(sum, divisor);
 }
+
+function generateTables(size, generator) {
+    if (size < 2) {
+        throw new Error("Cannot generate tables with a symbol size less than 2");
+    }
+
+    let toIndex = [],
+        toPoly  = [];
+
+    // we skip index 00 because
+}
