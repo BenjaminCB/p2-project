@@ -1,4 +1,8 @@
+import {config} from "../src/main.js";
 export {generateTables};
+let [toIndex, toPoly] = generateTables();
+console.log(toIndex);
+console.log(toPoly);
 
 // polyDivision([0, 0, 9, 7, 5, 6, 8, 4], [2, 3, 1, 0, 0, 0, 0, 0])
 /*
@@ -17,11 +21,14 @@ function polyDivision(dividend, divisor) {
     // find factor
     let offset = dividendDegree - divisorDegree;
     let value = dividend[dividendDegree] / divisor[divisorDegree];
-    let factor = new Array(divisor.length).fill(0);
-    factor[offset] = value;
+    // let factor = new Array(divisor.length).fill(0);
+    // factor[offset] = value;
+
+    divisor = arrayShift(divisor, offset);
+    divisor = map(element => galoisMultiply(element, value));
 
     // multiply by factor
-    let upScaled = polyMultiply(divisor, factor);
+    // let upScaled = polyMultiply(divisor, factor);
 
     // polynomial add
     let sum = polyAdd(dividend, upScaled);
@@ -30,7 +37,7 @@ function polyDivision(dividend, divisor) {
 }
 
 /*
- * Input: size of galois field in bits, generator for this in table as a number
+ * Input: void
  *
  * Output:
  * two tables first toIndex which takes a polinomial form as a number of an element
@@ -38,7 +45,9 @@ function polyDivision(dividend, divisor) {
  * so toIndex[0] is undefined
  * second is toPoly which given an element index gives the polynomial form as a number
  */
-function generateTables(size, generator) {
+function generateTables() {
+    let size = 2 ** config.symbolSize;
+    let generator = config.fieldGenerator;
     // we do not generate tables less than 2
     if (size < 2) {
         throw new Error("Cannot generate tables with a symbol size less than 2");
@@ -90,4 +99,16 @@ function findHighestBit(num) {
  */
 function hasBit(num, bit) {
     return (num > (num ^ bit));
+}
+
+function polyAdd(a, b) {
+    let res = [];
+    for (let i = 0; i < a.length; i++) {
+        res[i] = a[i] ^ b[i];
+    };
+    return res;
+}
+
+function galoisMultiply(a, b) {
+    return toPoly((toIndex(a) + toIndex(b)) % (2 ** config.symbolSize - 1));
 }
