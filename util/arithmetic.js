@@ -1,8 +1,5 @@
-import {config} from "../src/main.js";
-export {generateTables};
-let [toIndex, toPoly] = generateTables();
-console.log(toIndex);
-console.log(toPoly);
+import {config, toIndex, toPoly} from "../src/main.js";
+export {generateTables, galoisMultiply};
 
 // polyDivision([0, 0, 9, 7, 5, 6, 8, 4], [2, 3, 1, 0, 0, 0, 0, 0])
 /*
@@ -110,5 +107,5 @@ function polyAdd(a, b) {
 }
 
 function galoisMultiply(a, b) {
-    return toPoly((toIndex(a) + toIndex(b)) % (2 ** config.symbolSize - 1));
+    return toPoly[(toIndex[a] + toIndex[b]) % (2 ** config.symbolSize - 1)];
 }

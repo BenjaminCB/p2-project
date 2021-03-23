@@ -1,6 +1,9 @@
 import fs from 'fs';
-export {config};
+import {generateTables} from "../util/arithmetic.js";
+export {config, toIndex, toPoly};
 
-const projectRoot = process.cwd();
-const configFile = fs.readFileSync(projectRoot + "/config.json");
-const config = JSON.parse(configFile);
+const   projectRoot = process.cwd(),
+        configFile = fs.readFileSync(projectRoot + "/config.json"),
+        config = JSON.parse(configFile),
+        [toIndex, toPoly] = generateTables();
+
