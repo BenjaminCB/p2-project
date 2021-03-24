@@ -21,8 +21,7 @@ p2-project
 - tests/
 - config.json
 
-# Naming 
-- constants in SCREAMING_CASE
+# Naming
 - variables in camelCase
 - date structures PascalCase
 

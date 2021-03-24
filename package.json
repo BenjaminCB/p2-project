@@ -1,0 +1,23 @@
+{
+    "name": "p2-project",
+    "version": "1.0.0",
+    "description": "Source code for p2-project",
+    "main": "main.js",
+    "type": "module",
+    "scripts": {
+        "test": "ava"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/BenjaminCB/p2-project.git"
+    },
+    "author": "datB2-26 (AAU Spring 2021)",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/BenjaminCB/p2-project/issues"
+    },
+    "homepage": "https://github.com/BenjaminCB/p2-project#readme",
+    "devDependencies": {
+        "ava": "^3.15.0"
+    }
+}
