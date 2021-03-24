@@ -1,5 +1,6 @@
-import {config, toIndex, toPoly} from "../src/main.js";
-export {generateTables, galoisMultiply, polyDivision, polyAdd, arrayShift, polyMultiply};
+import { config, toIndex, toPoly } from "../src/main.js";
+export { generateTables, galoisMultiply, polyDivision, polyDerive, polyAdd, arrayShift, polyMultiply };
+
 
 /*
  * Input: dividend and divisor both arrays of integers representing polynomials
@@ -28,7 +29,7 @@ function polyDivision(dividend, divisor) {
 }
 
 /*
- * Input: an array representing an array
+ * Input: an array representing a polynomial
  * Output: the degree of this polynomial
  */
 function polyDegree(poly) {
@@ -75,7 +76,7 @@ function generateTables() {
     }
 
     let toIndex = [],
-        toPoly  = [];
+        toPoly = [];
 
     // we skip index 00 because it creates weird indexing and is not needed
     // this means we need an extra case for 00 when we multiply and divide
@@ -84,7 +85,7 @@ function generateTables() {
 
     // current polynomial which we are calculating
     // highestBit in our generator 25 would be 16 because 25 = 0b11001
-    let current    = 1,
+    let current = 1,
         highestBit = findHighestBit(generator);
 
     for (let i = 1; i < size; i++) {
@@ -149,6 +150,20 @@ function galoisMultiply(a, b) {
         res = toPoly[(toIndex[a] + toIndex[b]) % (2 ** config.symbolSize - 1)];
     }
     return res;
+}
+
+
+/**
+ * Returns the derivative of a polynomium
+ * @param {number[]} poly Array representation of a polynomium
+ * @return {number[]} Array representation of the derived polynomium
+ */
+function polyDerive(poly) {
+    let derivedPoly = [];
+    for (let i = 1; i < poly.length; i++) {
+        derivedPoly[i - 1] = poly[i] * i;
+    }
+    return derivedPoly;
 }
 
 /*

@@ -1,14 +1,14 @@
 import test from 'ava';
-import {galoisMultiply, generateTables, polyDivision} from "../util/arithmetic.js";
+import { galoisMultiply, generateTables, polyDivision, polyDerive } from "../util/arithmetic.js";
 
 test("Galois multiplication", t => {
     let actual = [
-                    galoisMultiply(1, 1),
-                    galoisMultiply(1, 11),
-                    galoisMultiply(4, 8),
-                    galoisMultiply(8, 7),
-                    galoisMultiply(12, 3),
-                 ];
+        galoisMultiply(1, 1),
+        galoisMultiply(1, 11),
+        galoisMultiply(4, 8),
+        galoisMultiply(8, 7),
+        galoisMultiply(12, 3),
+    ];
     let expected = [1, 11, 11, 10, 13];
 
     t.deepEqual(actual, expected);
@@ -26,8 +26,19 @@ test("Field generation", t => {
 
 test("Poly division", t => {
     let dividend = [0, 0, 9, 7, 5, 6, 8, 4],
-        divisor  = [2, 3, 1, 0, 0, 0, 0, 0],
-        expected = [7,6,0,0,0,0,0,0],
-        actual   = polyDivision(dividend, divisor);
+        divisor = [2, 3, 1, 0, 0, 0, 0, 0],
+        expected = [7, 6, 0, 0, 0, 0, 0, 0],
+        actual = polyDivision(dividend, divisor);
     t.deepEqual(expected, actual);
 });
+
+test("Poly derive", t => {
+    let poly1 = [1, 2, 3, 4, 5, 6, 7, 8, 9],
+        expected1 = [2, 6, 12, 20, 30, 42, 56, 72],
+        actual1 = polyDerive(poly1),
+        poly2 = [-2, -1, 4, 11, -3],
+        expected2 = [-1, 8, 33, -12],
+        actual2 = polyDerive(poly2);
+    t.deepEqual(expected1, actual1);
+    t.deepEqual(expected2, actual2);
+})
