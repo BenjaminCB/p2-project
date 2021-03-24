@@ -1,5 +1,5 @@
 import test from 'ava';
-import {galoisMultiply, generateTables} from "../util/arithmetic.js";
+import {galoisMultiply, generateTables, polyDivision} from "../util/arithmetic.js";
 
 test("Galois multiplication", t => {
     let actual = [
@@ -22,4 +22,12 @@ test("Field generation", t => {
     let toPolyExpected = [1, 2, 4, 8, 9, 11, 15, 7, 14, 5, 10, 13, 3, 6, 12, 1];
     t.deepEqual(toIndexExpected, toIndexActual);
     t.deepEqual(toPolyExpected, toPolyActual);
+});
+
+test("Poly division", t => {
+    let dividend = [0, 0, 9, 7, 5, 6, 8, 4],
+        divisor  = [2, 3, 1, 0, 0, 0, 0, 0],
+        expected = [7,6,0,0,0,0,0,0],
+        actual   = polyDivision(dividend, divisor);
+    t.deepEqual(expected, actual);
 });

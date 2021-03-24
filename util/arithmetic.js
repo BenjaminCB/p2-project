@@ -1,7 +1,6 @@
 import {config, toIndex, toPoly} from "../src/main.js";
-export {generateTables, galoisMultiply};
+export {generateTables, galoisMultiply, polyDivision};
 
-// polyDivision([0, 0, 9, 7, 5, 6, 8, 4], [2, 3, 1, 0, 0, 0, 0, 0])
 /*
  * Input: dividend and divisor both arrays of integers representing polynomials
  * Output: remainder again as an array representing a polynomial
@@ -9,32 +8,57 @@ export {generateTables, galoisMultiply};
 function polyDivision(dividend, divisor) {
     let dividendDegree = polyDegree(dividend);
     let divisorDegree = polyDegree(divisor);
+    let offset = dividendDegree - divisorDegree;
+    let lastRound = false;
 
     // if the divident has a degree less than the divisor we can stop
-    if (dividendDegree < divisorDegree) {
-        return dividend
+    if (offset === 0) {
+        lastRound = true;
     }
 
     // find factor
-    let offset = dividendDegree - divisorDegree;
     let value = dividend[dividendDegree] / divisor[divisorDegree];
-    // let factor = new Array(divisor.length).fill(0);
-    // factor[offset] = value;
-
-    divisor = arrayShift(divisor, offset);
-    divisor = map(element => galoisMultiply(element, value));
-
-    // multiply by factor
-    // let upScaled = polyMultiply(divisor, factor);
+    let factor = arrayShift(divisor, offset - 1);
+    factor = factor.map(element => galoisMultiply(element, value));
 
     // polynomial add
-    let sum = polyAdd(dividend, upScaled);
+    let sum = polyAdd(dividend, factor);
 
-    return polyDivision(sum, divisor);
+    return lastRound ? sum : polyDivision(sum, divisor);
 }
 
 /*
- * Input: void
+ * Input: an array representing an array
+ * Output: the degree of this polynomial
+ */
+function polyDegree(poly) {
+    let i = poly.length - 1;
+    while (poly[i] === 0) {
+        i--;
+    };
+    return i;
+}
+
+/*
+ * Input:
+ * An array and the number (>=0) of times it should be shifted to the right,
+ * meaning the number of times that we multiply by x.
+ *
+ * Output:
+ * A new array which is the shifted version of the input array.
+ * There is no change on the input parameters
+ */
+function arrayShift(arr, num) {
+    let copy = [...arr];
+    for (let i = 0; i <= num; i++) {
+        let val = copy.pop();
+        copy.unshift(val);
+    };
+    return copy;
+}
+
+/*
+ * Input: void (though the global config struct needs to be defined)
  *
  * Output:
  * two tables first toIndex which takes a polinomial form as a number of an element
@@ -98,14 +122,31 @@ function hasBit(num, bit) {
     return (num > (num ^ bit));
 }
 
+/*
+ * Input: Two arrays representing polynomials, they need to be of equal length
+ * Output: A new array which is the sum of the two inputs
+ */
 function polyAdd(a, b) {
     let res = [];
+
+    if (a.length !== b.length) {
+        throw new Error("polyAdd expects the length of the arrays to be the same");
+    }
+
     for (let i = 0; i < a.length; i++) {
         res[i] = a[i] ^ b[i];
     };
     return res;
 }
 
+/*
+ * Input: Two field elements in polynomial form
+ * Output: The product in polynomial form
+ */
 function galoisMultiply(a, b) {
-    return toPoly[(toIndex[a] + toIndex[b]) % (2 ** config.symbolSize - 1)];
+    let res = 0;
+    if (a !== 0 && b !== 0) {
+        res = toPoly[(toIndex[a] + toIndex[b]) % (2 ** config.symbolSize - 1)];
+    }
+    return res;
 }
