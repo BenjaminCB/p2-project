@@ -1,5 +1,5 @@
 import {config, toIndex, toPoly} from "../src/main.js";
-export {generateTables, galoisMultiply, polyDivision};
+export {generateTables, galoisMultiply, polyDivision, polyAdd, arrayShift, polyMultiply};
 
 /*
  * Input: dividend and divisor both arrays of integers representing polynomials
@@ -149,4 +149,18 @@ function galoisMultiply(a, b) {
         res = toPoly[(toIndex[a] + toIndex[b]) % (2 ** config.symbolSize - 1)];
     }
     return res;
+}
+
+/*
+ * Input: Two arrays representing polynomials
+ * Output: An arrays representing the product of the two
+ */
+function polyMultiply(a, b) {
+    let prod = new Array(a.length + b.length - 1).fill(0);
+    for (let i = 0; i < a.length; i++) {
+        for (let j = 0; j < b.length; j++) {
+            prod[i+j] ^= galoisMultiply(a[i], b[j]);
+        };
+    };
+    return prod;
 }

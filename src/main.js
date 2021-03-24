@@ -1,5 +1,6 @@
 import fs from 'fs';
 import {generateTables} from "../util/arithmetic.js";
+import {codeGenerator} from "./setup/code_generator.js";
 export {config, toIndex, toPoly};
 
 const projectRoot = process.cwd();
@@ -9,6 +10,9 @@ let config = JSON.parse(configFile);
 const [toIndex, toPoly] = generateTables();
 
 parseArgs(process.argv);
+
+let code = codeGenerator();
+console.log(code);
 
 /*
  * Input: process.argv is these are the user inputs when starting the program
