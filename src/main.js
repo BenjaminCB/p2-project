@@ -12,7 +12,6 @@ const [toIndex, toPoly] = generateTables();
 parseArgs(process.argv);
 
 let code = codeGenerator();
-console.log(code);
 
 /*
  * Input: process.argv is these are the user inputs when starting the program
