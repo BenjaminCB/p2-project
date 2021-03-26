@@ -20,7 +20,7 @@ function polyDivision(dividend, divisor) {
 
     // find factor
     let value = dividend[dividendDegree] / divisor[divisorDegree];
-    let factor = arrayShift(divisor, offset - 1);
+    let factor = arrayShift(divisor, offset);
     factor = factor.map(element => galoisMultiply(element, value));
 
     // polynomial add
@@ -52,7 +52,7 @@ function polyDegree(poly) {
  */
 function arrayShift(arr, num) {
     let copy = [...arr];
-    for (let i = 0; i <= num; i++) {
+    for (let i = 0; i < num; i++) {
         let val = copy.pop();
         copy.unshift(val);
     };
