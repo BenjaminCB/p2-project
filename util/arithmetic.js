@@ -1,5 +1,6 @@
 import { config, toIndex, toPoly } from "../src/main.js";
-export { generateTables, galoisMultiply, polyDivision, polyDerive, polyAdd, arrayShift, polyMultiply };
+export { generateTables, galoisMultiply, polyDivision, polyDerive, polyAdd,
+         arrayShift, polyMultiply, invElement };
 
 
 /*
@@ -19,7 +20,7 @@ function polyDivision(dividend, divisor) {
 
     // find factor
     let value = dividend[dividendDegree] / divisor[divisorDegree];
-    let factor = arrayShift(divisor, offset - 1);
+    let factor = arrayShift(divisor, offset);
     factor = factor.map(element => galoisMultiply(element, value));
 
     // polynomial add
@@ -51,7 +52,7 @@ function polyDegree(poly) {
  */
 function arrayShift(arr, num) {
     let copy = [...arr];
-    for (let i = 0; i <= num; i++) {
+    for (let i = 0; i < num; i++) {
         let val = copy.pop();
         copy.unshift(val);
     };
@@ -178,4 +179,19 @@ function polyMultiply(a, b) {
         };
     };
     return prod;
+}
+
+/*
+ * Returns the inverse of an element in the galois field
+ * Input: An element in decimal form
+ * Output: The inverse in decimal form
+ */
+function invElement(element) {
+    let nElements = 2 ** config.symbolSize - 1;
+    if (element > nElements) {
+        throw new Error(element + " is not an element in the galois field");
+    }
+    // mathematically subtracting from the nElements should be the same as subtracting from zero
+    // node is a little wonky with negative numbers and modulo though
+    return toPoly[nElements - toIndex[element]];
 }
