@@ -1,13 +1,13 @@
 import test from 'ava';
-import { galoisMultiply, generateTables, polyDivision, polyDerive } from "../util/arithmetic.js";
+import { galoisMultiply, generateTables, polyDivision, polyDerive, invElement } from "../util/arithmetic.js";
 
 test("Galois multiplication", t => {
     let actual = [
-        galoisMultiply(1, 1),
-        galoisMultiply(1, 11),
-        galoisMultiply(4, 8),
-        galoisMultiply(8, 7),
-        galoisMultiply(12, 3),
+        galoisMultiply( 1,  1),
+        galoisMultiply( 1, 11),
+        galoisMultiply( 4,  8),
+        galoisMultiply( 8,  7),
+        galoisMultiply(12,  3),
     ];
     let expected = [1, 11, 11, 10, 13];
 
@@ -42,3 +42,14 @@ test("Poly derive", t => {
     t.deepEqual(expected1, actual1);
     t.deepEqual(expected2, actual2);
 })
+
+test("Inverse element", t => {
+    t.is( 1, invElement(1));
+    t.is(12, invElement(2));
+    t.is( 6, invElement(4));
+    t.is( 3, invElement(8));
+    t.is(13, invElement(9));
+    t.is(10, invElement(11));
+    t.is( 5, invElement(15));
+    t.is(14, invElement(7));
+});

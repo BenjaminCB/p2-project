@@ -1,5 +1,6 @@
 import { config, toIndex, toPoly } from "../src/main.js";
-export { generateTables, galoisMultiply, polyDivision, polyDerive, polyAdd, arrayShift, polyMultiply };
+export { generateTables, galoisMultiply, polyDivision, polyDerive, polyAdd,
+         arrayShift, polyMultiply, invElement };
 
 
 /*
@@ -178,4 +179,19 @@ function polyMultiply(a, b) {
         };
     };
     return prod;
+}
+
+/*
+ * Returns the inverse of an element in the galois field
+ * Input: An element in decimal form
+ * Output: The inverse in decimal form
+ */
+function invElement(element) {
+    let nElements = 2 ** config.symbolSize - 1;
+    if (element > nElements) {
+        throw new Error(element + " is not an element in the galois field");
+    }
+    // mathematically subtracting from the nElements should be the same as subtracting from zero
+    // node is a little wonky with negative numbers and modulo though
+    return toPoly[nElements - toIndex[element]];
 }
