@@ -1,6 +1,6 @@
 import { config, toIndex, toPoly } from "../src/main.js";
-export { generateTables, galoisMultiply, polyDivision, polyDerive, polyAdd,
-         arrayShift, polyMultiply, invElement };
+export { galoisMultiply, polyDivision, polyDerive, polyAdd, arrayShift, polyMultiply,
+         invElement, polyEval, findHighestBit, hasBit };
 
 
 /*
@@ -59,51 +59,6 @@ function arrayShift(arr, num) {
     return copy;
 }
 
-/*
- * Input: void (though the global config struct needs to be defined)
- *
- * Output:
- * two tables first toIndex which takes a polinomial form as a number of an element
- * and gives the index the polynomial form 0 has no defined value index in this table
- * so toIndex[0] is undefined
- * second is toPoly which given an element index gives the polynomial form as a number
- */
-function generateTables() {
-    let size = 2 ** config.symbolSize;
-    let generator = config.fieldGenerator;
-    // we do not generate tables less than 2
-    if (size < 2) {
-        throw new Error("Cannot generate tables with a symbol size less than 2");
-    }
-
-    let toIndex = [],
-        toPoly = [];
-
-    // we skip index 00 because it creates weird indexing and is not needed
-    // this means we need an extra case for 00 when we multiply and divide
-    toIndex[1] = 0;
-    toPoly[0] = 1;
-
-    // current polynomial which we are calculating
-    // highestBit in our generator 25 would be 16 because 25 = 0b11001
-    let current = 1,
-        highestBit = findHighestBit(generator);
-
-    for (let i = 1; i < size; i++) {
-        // multiply by alpha
-        current <<= 1;
-
-        // check to see if we are out of the field and corret it if we are
-        if (hasBit(current, highestBit)) {
-            current ^= generator;
-        }
-
-        toIndex[current] = i % (size - 1);
-        toPoly[i] = current;
-    };
-
-    return [toIndex, toPoly];
-}
 
 /*
  * Input: num which we want to find the highest bit in
@@ -194,4 +149,20 @@ function invElement(element) {
     // mathematically subtracting from the nElements should be the same as subtracting from zero
     // node is a little wonky with negative numbers and modulo though
     return toPoly[nElements - toIndex[element]];
+}
+
+/*
+ * Evaluate a polynomial at a given val using horners method for evaluation
+ * Input: Array representing a polynomial and a number for which the polynomilal should be evaluated
+ * Outpu: The result of the evaluation
+ */
+function polyEval(poly, val) {
+    return evaluate(0);
+    function evaluate(pos) {
+        if (pos === poly.length - 1) {
+            return poly[pos]
+        } else {
+            return galoisMultiply(evaluate(pos + 1), val) ^ poly[pos];
+        }
+    }
 }
