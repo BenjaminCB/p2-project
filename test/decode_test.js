@@ -24,3 +24,13 @@ test("Syndrome calculation", t => {
         t.pass();
     }
 });
+
+test("Chien search", t => {
+    if (isRS(15, 11, 4, 19)) {
+        let expected = [6, 13];
+        let actual = decode.chien([1, 14, 14]);
+        t.deepEqual(expected, actual);
+    } else {
+        t.pass();
+    }
+});

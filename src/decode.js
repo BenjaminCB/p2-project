@@ -1,6 +1,23 @@
-import { config, toPoly } from "./main.js";
+import { config, toPoly, toIndex } from "./main.js";
 import * as arith from "../util/arithmetic.js";
-export { berlekamp, calcSyndromes };
+export { calcSyndromes, berlekamp, chien };
+
+
+/*
+ * Calculate the syndromes given the received message
+ * Input: An array representing the received message as a polynomial
+ * Output: An array representing the syndrome polynomial
+ */
+function calcSyndromes(received) {
+    let twoT = config.codeSize - config.messageSize,
+        syndromes = [];
+
+    for (let i = 0; i < twoT; i++) {
+        syndromes[i] = arith.polyEval(received, toPoly[i]);
+    };
+
+    return syndromes;
+}
 
 /*
  * Caluculate the error locator and it's coefficients using the berlekamp-massey algerithm
@@ -49,17 +66,50 @@ function berlekamp(syndromes) {
 }
 
 /*
- * Calculate the syndromes given the received message
- * Input: An array representing the received message as a polynomial
- * Output: An array representing the syndrome polynomial
+ * Finds the roots of the error locater polynomial
+ * Input: An array representing the error locater polynomial
+ * Output: An array of the found roots in the found order and in index form
  */
-function calcSyndromes(received) {
-    let twoT = config.codeSize - config.messageSize,
-        syndromes = [];
+function chien(errorLocator) {
+    let roots = [],
+        nElements = 2 ** config.symbolSize - 1,
+        t = (config.codeSize - config.messageSize) / 2,
+        terms = [...errorLocator];
 
-    for (let i = 0; i < twoT; i++) {
-        syndromes[i] = arith.polyEval(received, toPoly[i]);
+    // is the starting point a root
+    if (arith.polyEval(errorLocator, toPoly[0]) === 0) {
+        roots[roots.length] = 0;
+    }
+
+    // go through the rest of the elements
+    for (let i = 1; i < nElements; i++) {
+        // if we found enough errors stop
+        // TODO add functionality to check for too many errors
+        if (roots.length === t) {
+            break;
+        }
+
+        terms = updateTerms(terms);
+
+        // reduce terms to a value and check if it is 0
+        if (terms.reduce((acc, val) => acc ^ val) === 0) {
+            roots[roots.length] = i;
+        }
     };
 
-    return syndromes;
+    return roots;
+
+    function updateTerms(terms) {
+        // make copy and factor for multiplication
+        let newTerms = [...terms],
+            alpha = toPoly[1];
+
+        // for every value multiply it by the factor (alpha) then update the factor
+        for (let i = 1; i < newTerms.length; i++) {
+            newTerms[i] = arith.galoisMultiply(newTerms[i], alpha);
+            alpha = arith.galoisMultiply(alpha, toPoly[1]);
+        };
+
+        return newTerms;
+    }
 }
