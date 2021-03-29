@@ -1,5 +1,5 @@
 import test from 'ava';
-import * as decode from "../src/decoding.js";
+import * as decode from "../src/decode.js";
 import {isRS} from "./arithmetic_test.js";
 
 test("Berlekamp algorithm", t => {
