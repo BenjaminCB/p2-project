@@ -1,6 +1,8 @@
 import test from 'ava';
-import { galoisMultiply, generateTables, polyDivision, polyDerive, invElement } from "../util/arithmetic.js";
-import { config } from "../src/main.js";
+import { galoisMultiply, generateTables, polyDivision, polyDerive, invElement,
+         polyEval
+       } from "../util/arithmetic.js";
+import { config, toPoly } from "../src/main.js";
 
 test("Galois multiplication", t => {
     if (!isRS(15, 11, 4, 25)) {
@@ -68,6 +70,18 @@ test("Inverse element", t => {
         t.is(10, invElement(11));
         t.is( 5, invElement(15));
         t.is(14, invElement(7));
+    }
+});
+
+test("Polynomial evaluation", t => {
+    if (isRS(15, 11, 4, 19)) {
+        let poly = [12, 12, 1, 3, 11, 10, 9, 8, 7, 11, 5, 4, 3, 2, 1];
+        t.is(15, polyEval(poly, toPoly[0]));
+        t.is( 3, polyEval(poly, toPoly[1]));
+        t.is( 4, polyEval(poly, toPoly[2]));
+        t.is(12, polyEval(poly, toPoly[3]));
+    } else {
+        t.pass();
     }
 });
 

@@ -1,6 +1,6 @@
 import { config, toIndex, toPoly } from "../src/main.js";
 export { generateTables, galoisMultiply, polyDivision, polyDerive, polyAdd,
-         arrayShift, polyMultiply, invElement };
+         arrayShift, polyMultiply, invElement, polyEval };
 
 
 /*
@@ -194,4 +194,20 @@ function invElement(element) {
     // mathematically subtracting from the nElements should be the same as subtracting from zero
     // node is a little wonky with negative numbers and modulo though
     return toPoly[nElements - toIndex[element]];
+}
+
+/*
+ * Evaluate a polynomial at a given val using horners method for evaluation
+ * Input: Array representing a polynomial and a number for which the polynomilal should be evaluated
+ * Outpu: The result of the evaluation
+ */
+function polyEval(poly, val) {
+    return evaluate(0);
+    function evaluate(pos) {
+        if (pos === poly.length - 1) {
+            return poly[pos]
+        } else {
+            return galoisMultiply(evaluate(pos + 1), val) ^ poly[pos];
+        }
+    }
 }

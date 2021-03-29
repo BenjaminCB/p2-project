@@ -1,7 +1,8 @@
 import fs from 'fs';
-import {generateTables} from "../util/arithmetic.js";
-import {codeGenerator} from "./setup/code_generator.js";
-export {config, toIndex, toPoly};
+import { generateTables } from "../util/arithmetic.js";
+import { codeGenerator } from "./setup.js";
+import { calcSyndromes } from "./decoding.js";
+export { config, toIndex, toPoly };
 
 const projectRoot = process.cwd();
 const configFile = fs.readFileSync(projectRoot + "/config.json");

@@ -1,5 +1,5 @@
-import * as arith from "../../util/arithmetic.js";
-import {config, toPoly} from "../main.js";
+import * as arith from "../util/arithmetic.js";
+import {config, toPoly} from "./main.js";
 export {codeGenerator};
 
 /*

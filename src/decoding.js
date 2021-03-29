@@ -1,8 +1,7 @@
-import {config} from "../main.js";
-import * as arith from "../../util/arithmetic.js";
+import { config, toPoly } from "./main.js";
+import * as arith from "../util/arithmetic.js";
+export { berlekamp, calcSyndromes };
 
-let s = [15, 3, 4, 12];
-console.log(berlekamp(s));
 /*
  * Caluculate the error locator and it's coefficients using the berlekamp-massey algerithm
  * Input: An array representing the syndrome polynomial.
@@ -47,4 +46,20 @@ function berlekamp(syndromes) {
     }
 
     return lambda;
+}
+
+/*
+ * Calculate the syndromes given the received message
+ * Input: An array representing the received message as a polynomial
+ * Output: An array representing the syndrome polynomial
+ */
+function calcSyndromes(received) {
+    let twoT = config.codeSize - config.messageSize,
+        syndromes = [];
+
+    for (let i = 0; i < twoT; i++) {
+        syndromes[i] = arith.polyEval(received, toPoly[i]);
+    };
+
+    return syndromes;
 }

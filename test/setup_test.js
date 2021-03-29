@@ -1,6 +1,6 @@
 import test from 'ava';
-import {codeGenerator} from "../src/setup/code_generator.js";
 import {config} from "../src/main.js";
+import {codeGenerator} from "../src/setup.js";
 
 test("Code generator", t => {
     if (config.codeSize != 15 ||
