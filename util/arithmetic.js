@@ -4,29 +4,63 @@ export { galoisMultiply, polyDivision, polyDerive, polyAdd, arrayShift, polyMult
 
 
 /*
+ * TODO: this could probably be done more efficiently especially adding and removing padding
+ *
  * Input: dividend and divisor both arrays of integers representing polynomials
  * Output: remainder again as an array representing a polynomial
  */
 function polyDivision(dividend, divisor) {
-    let dividendDegree = polyDegree(dividend);
-    let divisorDegree = polyDegree(divisor);
-    let offset = dividendDegree - divisorDegree;
-    let lastRound = false;
+    let newDivisor = [...divisor],
+        [dividendDegree, divisorDegree, offset] = degreeAndOffset(dividend, divisor);
 
-    // if the divident has a degree less than the divisor we can stop
-    if (offset === 0) {
-        lastRound = true;
+
+    // if the dividend has a lower degree we can just return it since division will do nothing
+    // if the dividend has a higher degree we pad on zeroes such that the arrays have the same length
+    // this is done for practical reasons and not mathematical
+    if (dividendDegree < divisorDegree) {
+        return dividend;
+    } else if (dividendDegree > divisorDegree) {
+        for (let i = 0; i < offset; i++) {
+            newDivisor[newDivisor.length] = 0;
+        };
     }
 
-    // find factor
-    let value = dividend[dividendDegree] / divisor[divisorDegree];
-    let factor = arrayShift(divisor, offset);
-    factor = factor.map(element => galoisMultiply(element, value));
+    // remove trailing zeroes
+    let res = division(dividend, newDivisor);
+    while (res[res.length - 1] === 0) {
+        res.pop();
+    };
 
-    // polynomial add
-    let sum = polyAdd(dividend, factor);
+    return res;
 
-    return lastRound ? sum : polyDivision(sum, divisor);
+    // this is the actual division
+    function division(dividend, divisor) {
+        let [dividendDegree, divisorDegree, offset] = degreeAndOffset(dividend, divisor);
+        let lastRound = false;
+
+        // if the divident has a degree less than the divisor we can stop
+        if (offset === 0) {
+            lastRound = true;
+        }
+
+        // find factor
+        let value = dividend[dividendDegree] / divisor[divisorDegree];
+        let factor = arrayShift(divisor, offset);
+        factor = factor.map(element => galoisMultiply(element, value));
+
+        // polynomial add
+        let sum = polyAdd(dividend, factor);
+
+        return lastRound ? sum : division(sum, divisor);
+    }
+
+    // calculate degree for the parameters and the offset between them
+    function degreeAndOffset(polyA, polyB) {
+        let polyADegree = polyDegree(polyA);
+        let polyBDegree = polyDegree(polyB);
+        let offset = polyADegree - polyBDegree;
+        return [polyADegree, polyBDegree, offset];
+    }
 }
 
 /*
@@ -83,16 +117,25 @@ function hasBit(num, bit) {
  * Input: Two arrays representing polynomials, they need to be of equal length
  * Output: A new array which is the sum of the two inputs
  */
+polyAdd([2, 3, 4], [3, 5, 2, 0, 1]);
 function polyAdd(a, b) {
-    let res = [];
+    let res = [],
+        longest = a.length > b.length ? a : b,
+        shortest = a.length > b.length ? b : a,
+        i = 0;
 
-    if (a.length !== b.length) {
-        throw new Error("polyAdd expects the length of the arrays to be the same");
-    }
-
-    for (let i = 0; i < a.length; i++) {
-        res[i] = a[i] ^ b[i];
+    // add terms where both polynomials are defined
+    while (i < shortest.length) {
+        res[i] = shortest[i] ^ longest[i];
+        i++;
     };
+
+    // fill in the rest of the terms with the remaining terms from the longest polynomial
+    while  (i < longest.length) {
+        res[i] = longest[i];
+        i++;
+    };
+
     return res;
 }
 
@@ -117,7 +160,7 @@ function galoisMultiply(a, b) {
 function polyDerive(poly) {
     let derivedPoly = [];
     for (let i = 1; i < poly.length; i++) {
-        derivedPoly[i - 1] = poly[i] * i;
+        derivedPoly[i - 1] = galoisMultiply(poly[i], i);
     }
     return derivedPoly;
 }
