@@ -113,3 +113,32 @@ function chien(errorLocator) {
         return newTerms;
     }
 }
+
+let res = forney([1, 14, 14], [15, 3, 4, 12], [6, 13]);
+console.log(res);
+
+function forney(errorLocator, syndromes, roots) {
+    let errorMag = calcErrorMag(),
+        dydx = arith.polyDerive(errorLocator),
+        errorVals = [];
+
+    for (let i = 0; i < roots.length; i++) {
+        let invRoot    = arith.invElement(roots[i]),                 // Find the inverse element of the root
+            dividend   = arith.polyEval(errorMag, invRoot),          // evaluate errorMag at inverse root
+            divisor    = arith.polyEval(dydx, invRoot),              // evaluate derivative of error locater at root
+            invDivisor = arith.invElement(divisor),                  // find the inverse of the divisor
+            product    = arith.galoisMultiply(dividend, invDivisor); // This is equivelent to divident / divisor
+        errorVals[i]   = arith.galoisMultiply(roots[i], product);
+    };
+
+    return errorVals;
+
+    function calcErrorMag() {
+        let product = arith.polyMultiply(errorLocator, syndromes),
+            twoT = config.codeSize - config.messageSize,
+            divisor = new Array(twoT + 1).fill(0);
+        divisor[divisor.length - 1] = 1;
+
+        return arith.polyDivision(product, divisor);
+    }
+}
