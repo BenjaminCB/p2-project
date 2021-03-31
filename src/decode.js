@@ -1,6 +1,6 @@
 import { config, toPoly, toIndex } from "./main.js";
 import * as arith from "../util/arithmetic.js";
-export { calcSyndromes, berlekamp, chien };
+export { calcSyndromes, berlekamp, chien, forney };
 
 
 /*
@@ -111,5 +111,40 @@ function chien(errorLocator) {
         };
 
         return newTerms;
+    }
+}
+
+/*
+ * Caluculate the error values using the forney algorithm
+ * Input: Three arrays, representing respectivelly the error locater, the syndrome polynomial
+ *        and the roots of the error locator
+ * Output: An array of the error values
+ */
+function forney(errorLocator, syndromes, roots) {
+    let errorMag  = calcErrorMag(),
+        dydx      = arith.polyDerive(errorLocator),
+        errorVals = [],
+        invXs     = roots.map(val => toPoly[val]),          // get the inverteds X's by converting the roots to poly form
+        xs        = invXs.map(x => arith.invElement(x));    // get the actual X's by inverting the x^-1's
+
+    for (let i = 0; i < roots.length; i++) {
+        // calculate an expression equivelent to a * b / c where a, b and c are field elements
+        let dividend   = arith.polyEval(errorMag, invXs[i]),         // evaluate errorMag at inverse root
+            divisor    = arith.polyEval(dydx, invXs[i]),             // evaluate derivative of error locater at root
+            invDivisor = arith.invElement(divisor),                  // find the inverse of the divisor
+            product    = arith.galoisMultiply(dividend, invDivisor); // This is equivelent to divident / divisor
+        errorVals[i]   = arith.galoisMultiply(xs[i], product);
+    };
+
+    return errorVals;
+
+    // calculate the expression (lambda(x) * S(x)) mod x^(2t))
+    function calcErrorMag() {
+        let product = arith.polyMultiply(errorLocator, syndromes),
+            twoT = config.codeSize - config.messageSize,
+            divisor = new Array(twoT + 1).fill(0);
+        divisor[divisor.length - 1] = 1;
+
+        return arith.polyDivision(product, divisor);
     }
 }

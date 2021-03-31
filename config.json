@@ -2,7 +2,7 @@
     "codeSize": 15,
     "messageSize": 11,
     "symbolSize": 4,
-    "fieldGenerator": 19,
+    "fieldGenerator": 25,
     "mode": "encode",
     "encoding" : "hex",
     "inputFile": "input.txt",
