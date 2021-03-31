@@ -26,8 +26,8 @@ test("Poly division", t => {
         t.pass();
     } else {
         let dividend = [0, 0, 9, 7, 5, 6, 8, 4],
-            divisor = [2, 3, 1, 0, 0, 0, 0, 0],
-            expected = [7, 6, 0, 0, 0, 0, 0, 0],
+            divisor = [2, 3, 1],
+            expected = [7, 6],
             actual = polyDivision(dividend, divisor);
         t.deepEqual(expected, actual);
     }
@@ -66,6 +66,11 @@ test("Polynomial evaluation", t => {
         t.is( 3, polyEval(poly, toPoly[1]));
         t.is( 4, polyEval(poly, toPoly[2]));
         t.is(12, polyEval(poly, toPoly[3]));
+    } else if (isRS(15, 11, 4, 25)) {
+        let poly = [12, 4, 5];
+        t.is(12, polyEval(poly, 0));
+        t.is(13, polyEval(poly, 1));
+        t.is( 9, polyEval(poly, 2));
     } else {
         t.pass();
     }

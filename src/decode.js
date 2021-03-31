@@ -121,7 +121,6 @@ function chien(errorLocator) {
  * Output: An array of the error values
  */
 function forney(errorLocator, syndromes, roots) {
-    debugger;
     let errorMag  = calcErrorMag(),
         dydx      = arith.polyDerive(errorLocator),
         errorVals = [],
@@ -129,7 +128,6 @@ function forney(errorLocator, syndromes, roots) {
         xs        = invXs.map(x => arith.invElement(x));    // get the actual X's by inverting the x^-1's
 
     for (let i = 0; i < roots.length; i++) {
-        debugger;
         // calculate an expression equivelent to a * b / c where a, b and c are field elements
         let dividend   = arith.polyEval(errorMag, invXs[i]),         // evaluate errorMag at inverse root
             divisor    = arith.polyEval(dydx, invXs[i]),             // evaluate derivative of error locater at root
