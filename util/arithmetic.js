@@ -160,7 +160,14 @@ function galoisMultiply(a, b) {
 function polyDerive(poly) {
     let derivedPoly = [];
     for (let i = 1; i < poly.length; i++) {
-        derivedPoly[i - 1] = galoisMultiply(poly[i], i);
+        if (i % 2 == 0) {
+            // we do not want to add zero in the last round since that does nothing
+            if (i !== poly.length - 1) {
+                derivedPoly[i - 1] = 0;
+            }
+        } else {
+            derivedPoly[i - 1] = galoisMultiply(poly[i], i);
+        }
     }
     return derivedPoly;
 }

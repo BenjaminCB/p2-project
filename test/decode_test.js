@@ -34,3 +34,11 @@ test("Chien search", t => {
         t.pass();
     }
 });
+
+test("Forney", t => {
+    if (isRS(15, 11, 4, 19)) {
+        let expected = [13, 2];
+        let actual = decode.forney([1, 14, 14], [15, 3, 4, 12], [6, 13]);
+        t.deepEqual(expected, actual);
+    }
+});
