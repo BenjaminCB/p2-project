@@ -2,6 +2,19 @@ import { config, toPoly, toIndex } from "./main.js";
 import * as arith from "../util/arithmetic.js";
 export { calcSyndromes, berlekamp, chien, forney };
 
+let rec = [3, 4, 9, 12, 11, 10, 9, 8, 7, 11, 5, 4, 3, 2, 1],
+    decoded = decodeBlock(rec);
+console.log(decoded);
+function decodeBlock(block) {
+    debugger;
+    let syndromes = calcSyndromes(block),
+        errorLocator = berlekamp(syndromes),
+        roots = chien(errorLocator),
+        values = forney(errorLocator, syndromes, roots),
+        error = errorPoly(roots, values),
+        corrected = errorCorrection(block, error);
+    return corrected;
+}
 
 /*
  * Calculate the syndromes given the received message
@@ -115,6 +128,7 @@ function chien(errorLocator) {
 }
 
 /*
+ * TODO: make a function that takes the roots and converts them to xs
  * Caluculate the error values using the forney algorithm
  * Input: Three arrays, representing respectivelly the error locater, the syndrome polynomial
  *        and the roots of the error locator
@@ -147,4 +161,24 @@ function forney(errorLocator, syndromes, roots) {
 
         return arith.polyDivision(product, divisor);
     }
+}
+
+/*
+ * TODO: make a function that takes the roots and converts them to xs
+ */
+function errorPoly(roots, values) {
+    debugger;
+    let invXs = roots.map(val => toPoly[val]),
+        xsIndex = invXs.map(x => toIndex[arith.invElement(x)]),
+        errors = new Array(xsIndex[xsIndex.length - 1] + 1).fill(0);
+
+    for (let i = 0; i < xsIndex.length; i++) {
+        errors[xsIndex[i]] = values[i];
+    };
+
+    return errors;
+}
+
+function errorCorrection(received, error) {
+    return arith.polyAdd(received, error);
 }
