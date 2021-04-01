@@ -1,18 +1,26 @@
 import { config, toPoly, toIndex } from "./main.js";
 import * as arith from "../util/arithmetic.js";
-export { calcSyndromes, berlekamp, chien, forney };
+export { decodeBlock, calcSyndromes, berlekamp, chien, forney };
 
-let rec = [3, 4, 9, 12, 11, 10, 9, 8, 7, 11, 5, 4, 3, 2, 1],
-    decoded = decodeBlock(rec);
-console.log(decoded);
+/*
+ * Decodes a block i.e a whole code word (message + redundency)
+ * Input: An array representing a block polynomial
+ * Output: An array representing the decoded message without redundency
+ */
 function decodeBlock(block) {
-    debugger;
     let syndromes = calcSyndromes(block),
         errorLocator = berlekamp(syndromes),
         roots = chien(errorLocator),
         values = forney(errorLocator, syndromes, roots),
         error = errorPoly(roots, values),
-        corrected = errorCorrection(block, error);
+        corrected = errorCorrection(block, error),
+        twoT = config.codeSize - config.messageSize;
+
+    // remove redundency from the corrected message
+    for (let i = 0; i < twoT; i++) {
+        corrected.shift();
+    };
+
     return corrected;
 }
 
