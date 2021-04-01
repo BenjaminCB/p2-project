@@ -1,7 +1,28 @@
 import { config, toPoly, toIndex } from "./main.js";
 import * as arith from "../util/arithmetic.js";
-export { calcSyndromes, berlekamp, chien, forney };
+export { decodeBlock, calcSyndromes, berlekamp, chien, forney };
 
+/*
+ * Decodes a block i.e a whole code word (message + redundency)
+ * Input: An array representing a block polynomial
+ * Output: An array representing the decoded message without redundency
+ */
+function decodeBlock(block) {
+    let syndromes = calcSyndromes(block),
+        errorLocator = berlekamp(syndromes),
+        roots = chien(errorLocator),
+        values = forney(errorLocator, syndromes, roots),
+        error = errorPoly(roots, values),
+        corrected = arith.polyAdd(block, error),
+        twoT = config.codeSize - config.messageSize;
+
+    // remove redundency from the corrected message
+    for (let i = 0; i < twoT; i++) {
+        corrected.shift();
+    };
+
+    return corrected;
+}
 
 /*
  * Calculate the syndromes given the received message
@@ -115,6 +136,7 @@ function chien(errorLocator) {
 }
 
 /*
+ * TODO: make a function that takes the roots and converts them to xs
  * Caluculate the error values using the forney algorithm
  * Input: Three arrays, representing respectivelly the error locater, the syndrome polynomial
  *        and the roots of the error locator
@@ -147,4 +169,23 @@ function forney(errorLocator, syndromes, roots) {
 
         return arith.polyDivision(product, divisor);
     }
+}
+
+/*
+ * TODO: make a function that takes the roots and converts them to xs
+ * Calculates the error polynomial
+ * Input: An array of the roots of the error polynomial and an errer of the error values
+ * Output: An array representing the error polynomial
+ */
+function errorPoly(roots, values) {
+    debugger;
+    let invXs = roots.map(val => toPoly[val]),
+        xsIndex = invXs.map(x => toIndex[arith.invElement(x)]),
+        errors = new Array(xsIndex[xsIndex.length - 1] + 1).fill(0);
+
+    for (let i = 0; i < xsIndex.length; i++) {
+        errors[xsIndex[i]] = values[i];
+    };
+
+    return errors;
 }
