@@ -29,6 +29,11 @@ function messagePoly(data) {
     return messages;
 }
 
+/*
+ * Encodes a message of size k into a block of size n
+ * Input: An array representing the message polynomial with a size of k (config.messageSize)
+ * Output: An array representing the block i.e an array representing T(x)
+ */
 function encodeBlock(msg) {
     let twoT = config.codeSize - config.messageSize,
         msgShifted = arith.multiplyX(msg, twoT),
