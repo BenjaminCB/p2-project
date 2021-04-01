@@ -3,7 +3,7 @@ import * as decode from "../src/decode.js";
 import {isRS} from "./arithmetic_test.js";
 
 test("Block decoding", t => {
-    if (isRS(15, 11, 4, 19) || isRS(15, 11, 4, 25)) {
+    if (isRS(15, 11, 4, 25)) {
         let rec = [3, 4, 9, 12, 11, 10, 9, 8, 7, 11, 5, 4, 3, 2, 1],
             actual = decode.decodeBlock(rec),
             expected = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];

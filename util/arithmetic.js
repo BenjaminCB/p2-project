@@ -1,6 +1,6 @@
 import { config, toIndex, toPoly } from "../src/main.js";
 export { galoisMultiply, polyDivision, polyDerive, polyAdd, arrayShift, polyMultiply,
-         invElement, polyEval, findHighestBit, hasBit };
+         invElement, polyEval, findHighestBit, hasBit, multiplyX };
 
 
 /*
@@ -45,7 +45,7 @@ function polyDivision(dividend, divisor) {
 
         // find factor
         let value = dividend[dividendDegree] / divisor[divisorDegree];
-        let factor = arrayShift(divisor, offset);
+        let factor = multiplyX(divisor, offset);
         factor = factor.map(element => galoisMultiply(element, value));
 
         // polynomial add
@@ -93,6 +93,18 @@ function arrayShift(arr, num) {
     return copy;
 }
 
+/*
+ * Multiplies a polynomial with x
+ * Input: An array representing the polynomial and the number of times to multiply by x
+ * Outpu: A new array representing the resulting polynomial
+ */
+function multiplyX(poly, num) {
+    let copy = [...poly];
+    for (let i = 0; i < num; i++) {
+        copy.unshift(0);
+    };
+    return copy;
+}
 
 /*
  * Input: num which we want to find the highest bit in

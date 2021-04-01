@@ -9,13 +9,20 @@ export { decodeBlock, calcSyndromes, berlekamp, chien, forney };
  */
 function decodeBlock(block) {
     let syndromes = calcSyndromes(block),
-        errorLocator = berlekamp(syndromes),
-        roots = chien(errorLocator),
-        values = forney(errorLocator, syndromes, roots),
-        error = errorPoly(roots, values),
-        corrected = arith.polyAdd(block, error),
-        twoT = config.codeSize - config.messageSize;
+        corrected;
 
+    if (!syndromes.every(val => val === 0)) {
+        let errorLocator = berlekamp(syndromes),
+            roots = chien(errorLocator),
+            values = forney(errorLocator, syndromes, roots),
+            error = errorPoly(roots, values);
+        corrected = arith.polyAdd(block, error);
+    } else {
+        corrected = block;
+    }
+
+
+    let twoT = config.codeSize - config.messageSize;
     // remove redundency from the corrected message
     for (let i = 0; i < twoT; i++) {
         corrected.shift();
@@ -178,7 +185,6 @@ function forney(errorLocator, syndromes, roots) {
  * Output: An array representing the error polynomial
  */
 function errorPoly(roots, values) {
-    debugger;
     let invXs = roots.map(val => toPoly[val]),
         xsIndex = invXs.map(x => toIndex[arith.invElement(x)]),
         errors = new Array(xsIndex[xsIndex.length - 1] + 1).fill(0);
