@@ -8,7 +8,6 @@ export { decodeBlock, calcSyndromes, berlekamp, chien, forney };
  * Output: An array representing the decoded message without redundency
  */
 function decodeBlock(block) {
-    debugger;
     let syndromes = calcSyndromes(block),
         corrected;
 
