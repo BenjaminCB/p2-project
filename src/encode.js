@@ -1,4 +1,6 @@
-import { config } from "../src/main.js";
+import { config, code } from "../src/main.js";
+import * as arith from "../util/arithmetic.js";
+export { encodeBlock };
 
 /**
  * @param {string} data Binary data string that is converted to message polynomiums
@@ -25,4 +27,12 @@ function messagePoly(data) {
     }
 
     return messages;
+}
+
+function encodeBlock(msg) {
+    let twoT = config.codeSize - config.messageSize,
+        msgShifted = arith.multiplyX(msg, twoT),
+        remainder = arith.polyDivision(msgShifted, code),
+        block = arith.polyAdd(msgShifted, remainder);
+    return block;
 }
