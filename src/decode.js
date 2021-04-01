@@ -13,7 +13,7 @@ function decodeBlock(block) {
         roots = chien(errorLocator),
         values = forney(errorLocator, syndromes, roots),
         error = errorPoly(roots, values),
-        corrected = errorCorrection(block, error),
+        corrected = arith.polyAdd(block, error),
         twoT = config.codeSize - config.messageSize;
 
     // remove redundency from the corrected message
@@ -173,6 +173,9 @@ function forney(errorLocator, syndromes, roots) {
 
 /*
  * TODO: make a function that takes the roots and converts them to xs
+ * Calculates the error polynomial
+ * Input: An array of the roots of the error polynomial and an errer of the error values
+ * Output: An array representing the error polynomial
  */
 function errorPoly(roots, values) {
     debugger;
@@ -185,8 +188,4 @@ function errorPoly(roots, values) {
     };
 
     return errors;
-}
-
-function errorCorrection(received, error) {
-    return arith.polyAdd(received, error);
 }
