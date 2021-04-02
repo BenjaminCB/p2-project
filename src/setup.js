@@ -1,10 +1,9 @@
 import fs from 'fs';
 import * as arith from "../util/arithmetic.js";
-import {config, toPoly} from "./main.js";
-export {codeGenerator, parseConfig, parseArgs, generateTables};
+import { config, toPoly, projectRoot } from "./main.js";
+export { codeGenerator, parseConfig, parseArgs, generateTables };
 
 function parseConfig() {
-    const projectRoot = process.cwd();
     const configFile = fs.readFileSync(projectRoot + "/config.json");
     let config = JSON.parse(configFile);
     config = parseArgs(config);
