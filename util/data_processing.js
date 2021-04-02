@@ -18,14 +18,14 @@ function binaryToPolys(data, size) {
         }
     }
 
-    if (coefficients.length > 0) {
-        while (coefficients.length < size) {
-            coefficients.push(0);
-        }
-        polynomials.push(coefficients);
-    }
+    // if (coefficients.length > 0) {
+    //     while (coefficients.length < size) {
+    //         coefficients.push(0);
+    //     }
+    //     polynomials.push(coefficients);
+    // }
 
-    return polynomials;
+    return [polynomials, coefficients];
 }
 
 /*

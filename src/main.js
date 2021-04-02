@@ -39,12 +39,14 @@ if (config.mode === "encode") {
         // uncomment if input is in utf-8
         // const binaryLine = data.strToBinaryStr(line);
         // const msgs = data.binaryToPolys(binaryLine, config.messageSize);
-        const msgs = data.binaryToPolys(line, config.messageSize);
+        const [msgs, leftover] = data.binaryToPolys(line, config.messageSize);
         let encodedMsgs = [];
 
         for (let i = 0; i < msgs.length; i++) {
             encodedMsgs[i] = encode.encodeBlock(msgs[i]);
         }
+
+        encodedMsgs[encodedMsgs.length] = leftover;
 
         // for all the message polynomials encode every coefficient to a binary string
         // Then join coefficients withouth a space then join polynomials with a space
@@ -80,25 +82,26 @@ if (config.mode === "encode") {
 
     // on line encode and write to output
     rl.on('line', line => {
-        debugger;
         // summary values
         lines++;
         const time = Date.now();
 
         // actual decoding
-        let received = data.binaryToPolys(line, config.codeSize),
+        let [received, leftover] = data.binaryToPolys(line, config.codeSize),
             decoded = [];
 
         for (let i = 0; i < received.length; i++) {
             decoded[i] = decode.decodeBlock(received[i]);
         }
 
+        decoded[decoded.length] = leftover;
+
         // convert decoded messages to a binary string
         let binaryStr = data.polysToBinaryStr(decoded);
 
-        while (binaryStr.length % 8 !== 0) {
-            binaryStr = binaryStr.slice(0, -1);
-        }
+        // while (binaryStr.length % 8 !== 0) {
+        //     binaryStr = binaryStr.slice(0, -1);
+        // }
 
         // log the time for encoding
         totalTime += Date.now() - time;
