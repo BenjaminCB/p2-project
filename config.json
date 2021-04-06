@@ -5,7 +5,9 @@
     "fieldGenerator": 19,
     "mode": "encode",
     "encoding" : "hex",
+    "errorChance": 2,
     "inputFile": "data/input.txt",
+    "encodedFile": "data/encoded.txt",
     "errorFile": "data/error.txt",
-    "outputFile": "data/output.txt"
+    "decodedFile": "data/decoded.txt"
 }

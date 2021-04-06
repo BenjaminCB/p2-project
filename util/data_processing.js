@@ -1,5 +1,14 @@
-import { config } from "../src/main.js";
-export { binaryToPolys, strToBinaryStr, polysToBinaryStr };
+import fs from 'fs';
+export { config, binaryToPolys, strToBinaryStr, polysToBinaryStr };
+
+const projectRoot = process.cwd();
+let config = parseConfig()
+
+function parseConfig() {
+    const configFile = fs.readFileSync(projectRoot + "/config.json");
+    let config = JSON.parse(configFile);
+    return config;
+}
 
 /**
  * @param {string} data Binary data string that is converted to message polynomiums

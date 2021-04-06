@@ -5,10 +5,10 @@ import * as encode from "./encode.js";
 import * as decode from "./decode.js";
 import * as arith from "../util/arithmetic.js";
 import * as data from "../util/data_processing.js";
-export { config, toIndex, toPoly, code, projectRoot };
+export { toIndex, toPoly, code, projectRoot};
 
 const projectRoot = process.cwd();
-let config = setup.parseConfig();
+let config = data.config;
 config = setup.parseArgs(config);
 
 const [toIndex, toPoly] = setup.generateTables();
@@ -21,13 +21,13 @@ if (config.mode === "encode") {
     let lines = 0;
 
     // read and write streams
-    const wl = fs.createWriteStream(projectRoot + "/" + config.errorFile, {encoding: "utf8"});
+    const wl = fs.createWriteStream(projectRoot + "/" + config.encodedFile, {encoding: "utf8"});
     const rl = readline.createInterface({
         input: fs.createReadStream(projectRoot + "/" + config.inputFile)
     });
 
     // Log what we are going to do
-    console.log(`Encoding lines in file: ${config.inputFile}\nWriting encoded lines to file: ${config.errorFile}`);
+    console.log(`Encoding lines in file: ${config.inputFile}\nWriting encoded lines to file: ${config.encodedFile}`);
 
     // on line encode and write to output
     rl.on('line', line => {
@@ -73,12 +73,12 @@ if (config.mode === "encode") {
     let lines = 0;
 
     // read and write streams
-    const wl = fs.createWriteStream(projectRoot + "/" + config.outputFile, {encoding: "utf8"});
+    const wl = fs.createWriteStream(projectRoot + "/" + config.decodedFile, {encoding: "utf8"});
     const rl = readline.createInterface({
         input: fs.createReadStream(projectRoot + "/" + config.errorFile)
     });
 
-    console.log(`Decoding lines in file: ${config.errorFile}\nWriting decoded lines to file: ${config.outputFile}`);
+    console.log(`Decoding lines in file: ${config.errorFile}\nWriting decoded lines to file: ${config.decodedFile}`);
 
     // on line encode and write to output
     rl.on('line', line => {

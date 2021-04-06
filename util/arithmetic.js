@@ -1,4 +1,5 @@
-import { config, toIndex, toPoly } from "../src/main.js";
+import { config } from "./data_processing.js";
+import { toIndex, toPoly } from "../src/main.js";
 export { galoisMultiply, polyDivision, polyDerive, polyAdd, arrayShift, polyMultiply,
          invElement, polyEval, findHighestBit, hasBit, multiplyX };
 

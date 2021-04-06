@@ -1,4 +1,5 @@
-import { config, code } from "../src/main.js";
+import { config } from "../util/data_processing.js";
+import { code } from "../src/main.js";
 import * as arith from "../util/arithmetic.js";
 export { encodeBlock };
 
