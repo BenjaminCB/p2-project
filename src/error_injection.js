@@ -4,6 +4,7 @@ import * as data from "../util/data_processing.js";
 
 const projectRoot = process.cwd();
 let config = data.config;
+const bitsPerBlock = config.symbolSize * config.codeSize;
 
 // read and write streams
 const wl = fs.createWriteStream(projectRoot + "/" + config.errorFile, {encoding: "utf8"});
@@ -20,16 +21,19 @@ rl.on('line', line => {
 
     debugger;
     // split the line into strings of length symbolsize whin possible
-    for (let i = 0; i < line.length; i += config.symbolSize) {
-        let partialLine = line.slice(i, i + config.symbolSize);
+    for (let i = 0; i < line.length; i += bitsPerBlock) {
+        let block = line.slice(i, i + bitsPerBlock);
 
         // inject errors
         for (let j = 0; j < config.errorChance; j++) {
-            let index = Math.trunc( partialLine.length * Math.random() );
-            partialLine = flip(partialLine, index);
+            let blockNum = Math.trunc( config.codeSize * Math.random() ),
+                index = config.symbolSize * blockNum;
+            block = block.substr(0, index) +
+                    randomSymbol() +
+                    block.substr(index + config.symbolSize);
         };
 
-        buffer += partialLine;
+        buffer += block;
     };
 
     wl.write(buffer + "\n");
@@ -56,4 +60,13 @@ function flip(str, bit) {
     }
 
     return str.substr(0, bit) + flipped + str.substr(bit + 1);
+}
+
+function randomSymbol() {
+    let num = Math.trunc( (2 ** config.symbolSize - 1) * Math.random() ),
+        numStr = num.toString(2);
+
+    while(numStr.length < config.symbolSize) numStr = "0" + numStr;
+
+    return numStr;
 }
