@@ -7,23 +7,23 @@ The program is configurable to run the users desired settings using config.JSON:
 
 1. From tekst to binary: 
 
-        @@
+      @@
 
 2. Input is a .txt file written in UFC-8. (@@@ Lige nu er det binær data og ikke 'karakter-tekst' @@@)
 
 3. Encodeing-run:
        
-       Creates "encoded.txt" which is the Reed-solomon incoded file, based on the "config.JSON" and the "input.txt"
+      Creates "encoded.txt" which is the Reed-solomon incoded file, based on the "config.JSON" and the "input.txt"
 
 4. Error-injection:
 
-        Creates "error.txt", this is "encoded.txt" but with random bitflips, to a specified amount of bits pr. RS(x,y)
+      Creates "error.txt", this is "encoded.txt" but with random bitflips, to a specified amount of bits pr. RS(x,y)
 
 5. Decodeing-run:
 
-        Creates "decoded.txt" with is "encoded.txt" decodes. 
-        This file would be identical to "input.txt", if the limits of the program have been complied with.
-        Also creates "diff.txt", that compares the diffrences between "decoded.txt" and "input.txt".
+      Creates "decoded.txt" with is "encoded.txt" decodes. 
+      This file would be identical to "input.txt", if the limits of the program have been complied with.
+      Also creates "diff.txt", that compares the diffrences between "decoded.txt" and "input.txt".
 
 6. To teskt from binary: @@
 
