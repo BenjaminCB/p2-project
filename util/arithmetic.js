@@ -1,9 +1,7 @@
-import { config, toIndex, toPoly } from "../src/main.js";
-export {
-    galoisMultiply, polyDivision, polyDerive, polyAdd, arrayShift, polyMultiply,
-    invElement, polyEval, findHighestBit, hasBit, multiplyX
-};
-
+import { config } from "./data_processing.js";
+import { toIndex, toPoly } from "../src/main.js";
+export { galoisMultiply, polyDivision, polyDerive, polyAdd, arrayShift, polyMultiply,
+         invElement, polyEval, findHighestBit, hasBit, multiplyX };
 
 /**
  * TODO: this could probably be done more efficiently especially adding and removing padding

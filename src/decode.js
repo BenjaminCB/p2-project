@@ -1,4 +1,5 @@
-import { config, toPoly, toIndex } from "./main.js";
+import { config } from "../util/data_processing.js";
+import { toPoly, toIndex } from "./main.js";
 import * as arith from "../util/arithmetic.js";
 export { decodeBlock, calcSyndromes, berlekamp, chien, forney };
 
@@ -186,6 +187,10 @@ function forney(errorLocator, syndromes, roots) {
  * @returns {number[]} Array representing the error polynomial
  */
 function errorPoly(roots, values) {
+    if (roots.length === 0 || values.length === 0) {
+        return [0];
+    }
+
     let invXs = roots.map(val => toPoly[val]),
         xsIndex = invXs.map(x => toIndex[arith.invElement(x)]),
         errors = new Array(xsIndex[xsIndex.length - 1] + 1).fill(0);
