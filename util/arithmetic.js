@@ -3,12 +3,11 @@ import { toIndex, toPoly } from "../src/main.js";
 export { galoisMultiply, polyDivision, polyDerive, polyAdd, arrayShift, polyMultiply,
          invElement, polyEval, findHighestBit, hasBit, multiplyX };
 
-
-/*
+/**
  * TODO: this could probably be done more efficiently especially adding and removing padding
- *
- * Input: dividend and divisor both arrays of integers representing polynomials
- * Output: remainder again as an array representing a polynomial
+ * @param {number[]} dividend array of integers representing a polynomial
+ * @param {number[]} divisor array of integers representing a polynomial
+ * @returns {number[]} remainder of the division as an array represented polynomial
  */
 function polyDivision(dividend, divisor) {
     let newDivisor = [...divisor],
@@ -64,9 +63,9 @@ function polyDivision(dividend, divisor) {
     }
 }
 
-/*
- * Input: an array representing a polynomial
- * Output: the degree of this polynomial
+/**
+ * @param {number[]} poly array representing a polynomial
+ * @returns {number} the degree of the parameter polynomial
  */
 function polyDegree(poly) {
     let i = poly.length - 1;
@@ -76,14 +75,10 @@ function polyDegree(poly) {
     return i;
 }
 
-/*
- * Input:
- * An array and the number (>=0) of times it should be shifted to the right,
- * meaning the number of times that we multiply by x.
- *
- * Output:
- * A new array which is the shifted version of the input array.
- * There is no change on the input parameters
+/**
+ * @param {number[]} arr The array to be shifted
+ * @param {number} num The amount of times it should be shifted to the right (>=0)
+ * @returns {number[]} A copy of the parameter array now shifted num times to the right
  */
 function arrayShift(arr, num) {
     let copy = [...arr];
@@ -94,10 +89,11 @@ function arrayShift(arr, num) {
     return copy;
 }
 
-/*
+/**
  * Multiplies a polynomial with x
- * Input: An array representing the polynomial and the number of times to multiply by x
- * Outpu: A new array representing the resulting polynomial
+ * @param {number[]} poly Array representing a polynomial
+ * @param {number} num The number of times to multiply by x
+ * @returns {number[]} A new array representing the resulting polynomial
  */
 function multiplyX(poly, num) {
     let copy = [...poly];
@@ -107,9 +103,9 @@ function multiplyX(poly, num) {
     return copy;
 }
 
-/*
- * Input: num which we want to find the highest bit in
- * Output: value of the highest bit
+/**
+ * @param {number} num The 10-base number to find the highest bit in
+ * @returns {number} The value of the highest bit in num
  */
 function findHighestBit(num) {
     let bit = 1;
@@ -118,19 +114,21 @@ function findHighestBit(num) {
     return bit;
 }
 
-/*
- * Input: number that we want to check and the value of the bit position that we want to check
- * Output: True if it contains contains that bit and false otherwise
+/**
+ * Checks if num contains bit in binary
+ * @param {number} num The 10-base number to be checked
+ * @param {number} bit The value of the bit position to be checked
+ * @returns {boolean} True if num contains the bit otherwise false
  */
 function hasBit(num, bit) {
     return (num > (num ^ bit));
 }
 
-/*
- * Input: Two arrays representing polynomials, they need to be of equal length
- * Output: A new array which is the sum of the two inputs
+/**
+ * @param {number[]} a Array representing a polynomial, must be the same length as b
+ * @param {number[]} b Array representing a polynomial, must be the same length as a
+ * @returns {number[]} A new array which is the sum of the two inputs
  */
-polyAdd([2, 3, 4], [3, 5, 2, 0, 1]);
 function polyAdd(a, b) {
     let res = [],
         longest = a.length > b.length ? a : b,
@@ -144,7 +142,7 @@ function polyAdd(a, b) {
     };
 
     // fill in the rest of the terms with the remaining terms from the longest polynomial
-    while  (i < longest.length) {
+    while (i < longest.length) {
         res[i] = longest[i];
         i++;
     };
@@ -152,9 +150,10 @@ function polyAdd(a, b) {
     return res;
 }
 
-/*
- * Input: Two field elements in polynomial form
- * Output: The product in polynomial form
+/**
+ * @param {number[]} a A field element in polynomial form
+ * @param {number[]} b A field element in polynomial form
+ * @returns The product of the two field elements in polynomial form
  */
 function galoisMultiply(a, b) {
     let res = 0;
@@ -166,9 +165,9 @@ function galoisMultiply(a, b) {
 
 
 /**
- * Returns the derivative of a polynomium
- * @param {number[]} poly Array representation of a polynomium
- * @return {number[]} Array representation of the derived polynomium
+ * Returns the derivative of a polynomial
+ * @param {number[]} poly Array representation of a polynomial
+ * @returns {number[]} Array representation of the derived polynomial
  */
 function polyDerive(poly) {
     let derivedPoly = [];
@@ -185,24 +184,25 @@ function polyDerive(poly) {
     return derivedPoly;
 }
 
-/*
- * Input: Two arrays representing polynomials
- * Output: An arrays representing the product of the two
+/**
+ * @param {number[]} a An array representing a polynomial
+ * @param {number[]} b An array representing a polynomial
+ * @returns A new array representing the product of the two parameter polynomials
  */
 function polyMultiply(a, b) {
     let prod = new Array(a.length + b.length - 1).fill(0);
     for (let i = 0; i < a.length; i++) {
         for (let j = 0; j < b.length; j++) {
-            prod[i+j] ^= galoisMultiply(a[i], b[j]);
+            prod[i + j] ^= galoisMultiply(a[i], b[j]);
         };
     };
     return prod;
 }
 
-/*
+/**
  * Returns the inverse of an element in the galois field
- * Input: An element in decimal form
- * Output: The inverse in decimal form
+ * @param {number} element An element in decimal form
+ * @returns {number} The inverse element in decimal form
  */
 function invElement(element) {
     let nElements = 2 ** config.symbolSize - 1;
@@ -214,10 +214,11 @@ function invElement(element) {
     return toPoly[nElements - toIndex[element]];
 }
 
-/*
+/**
  * Evaluate a polynomial at a given val using horners method for evaluation
- * Input: Array representing a polynomial and a number for which the polynomilal should be evaluated
- * Outpu: The result of the evaluation
+ * @param {number[]} poly An Array representing a polynomial
+ * @param {number} val Decimual number for which poly should be evaluated
+ * @returns Tje result of the evaluation
  */
 function polyEval(poly, val) {
     return evaluate(0);

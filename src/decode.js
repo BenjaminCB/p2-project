@@ -3,10 +3,10 @@ import { toPoly, toIndex } from "./main.js";
 import * as arith from "../util/arithmetic.js";
 export { decodeBlock, calcSyndromes, berlekamp, chien, forney };
 
-/*
+/**
  * Decodes a block i.e a whole code word (message + redundency)
- * Input: An array representing a block polynomial
- * Output: An array representing the decoded message without redundency
+ * @param {number[]} block Array representing a block polynomial
+ * @returns Array representing the decoded message without redundancy
  */
 function decodeBlock(block) {
     let syndromes = calcSyndromes(block),
@@ -32,10 +32,10 @@ function decodeBlock(block) {
     return corrected;
 }
 
-/*
+/**
  * Calculate the syndromes given the received message
- * Input: An array representing the received message as a polynomial
- * Output: An array representing the syndrome polynomial
+ * @param {number[]} received Array representing the received message as a polynomial
+ * @returns {number[]} Array representing the syndrome polynomial
  */
 function calcSyndromes(received) {
     let twoT = config.codeSize - config.messageSize,
@@ -48,11 +48,10 @@ function calcSyndromes(received) {
     return syndromes;
 }
 
-/*
+/**
  * Caluculate the error locator and it's coefficients using the berlekamp-massey algerithm
- * Input: An array representing the syndrome polynomial.
- *        Some value in the config should be defined as well.
- * Output: An array representing the error locator polynomial
+ * @param {number[]} syndromes Array representing the syndrome polynomial.
+ * @returns Array representing the error locator polynomial.
  */
 function berlekamp(syndromes) {
     let twoT = config.codeSize - config.messageSize,   // twice the number of errors we can correct
@@ -60,8 +59,8 @@ function berlekamp(syndromes) {
         l = 0,                                         // order tracker
         lambda = new Array(twoT).fill(0),              // error locator
         c = new Array(twoT).fill(0);                   // correction polynomial
-        lambda[0] = 1;
-        c[1] = 1;
+    lambda[0] = 1;
+    c[1] = 1;
 
     while (k <= twoT) {
         let e = calculateE();
@@ -94,10 +93,10 @@ function berlekamp(syndromes) {
     return lambda;
 }
 
-/*
+/**
  * Finds the roots of the error locater polynomial
- * Input: An array representing the error locater polynomial
- * Output: An array of the found roots in the found order and in index form
+ * @param {number[]} errorLocator Array representing the error locator polynomial
+ * @returns {number[]} Array containing the found roots in the order they were found and on index form
  */
 function chien(errorLocator) {
     let roots = [],
@@ -143,27 +142,28 @@ function chien(errorLocator) {
     }
 }
 
-/*
+/**
  * TODO: make a function that takes the roots and converts them to xs
  * Caluculate the error values using the forney algorithm
- * Input: Three arrays, representing respectivelly the error locater, the syndrome polynomial
- *        and the roots of the error locator
- * Output: An array of the error values
+ * @param {number[]} errorLocator Array representing the error locator polynomial
+ * @param {number[]} syndromes Array representing the syndrome polynomail
+ * @param {number[]} roots Array containing the roots of the error locator
+ * @returns Array of the calculated error values
  */
 function forney(errorLocator, syndromes, roots) {
-    let errorMag  = calcErrorMag(),
-        dydx      = arith.polyDerive(errorLocator),
+    let errorMag = calcErrorMag(),
+        dydx = arith.polyDerive(errorLocator),
         errorVals = [],
-        invXs     = roots.map(val => toPoly[val]),          // get the inverteds X's by converting the roots to poly form
-        xs        = invXs.map(x => arith.invElement(x));    // get the actual X's by inverting the x^-1's
+        invXs = roots.map(val => toPoly[val]),          // get the inverteds X's by converting the roots to poly form
+        xs = invXs.map(x => arith.invElement(x));    // get the actual X's by inverting the x^-1's
 
     for (let i = 0; i < roots.length; i++) {
         // calculate an expression equivelent to a * b / c where a, b and c are field elements
-        let dividend   = arith.polyEval(errorMag, invXs[i]),         // evaluate errorMag at inverse root
-            divisor    = arith.polyEval(dydx, invXs[i]),             // evaluate derivative of error locater at root
+        let dividend = arith.polyEval(errorMag, invXs[i]),         // evaluate errorMag at inverse root
+            divisor = arith.polyEval(dydx, invXs[i]),             // evaluate derivative of error locater at root
             invDivisor = arith.invElement(divisor),                  // find the inverse of the divisor
-            product    = arith.galoisMultiply(dividend, invDivisor); // This is equivelent to divident / divisor
-        errorVals[i]   = arith.galoisMultiply(xs[i], product);
+            product = arith.galoisMultiply(dividend, invDivisor); // This is equivelent to divident / divisor
+        errorVals[i] = arith.galoisMultiply(xs[i], product);
     };
 
     return errorVals;
@@ -179,11 +179,12 @@ function forney(errorLocator, syndromes, roots) {
     }
 }
 
-/*
+/**
  * TODO: make a function that takes the roots and converts them to xs
  * Calculates the error polynomial
- * Input: An array of the roots of the error polynomial and an errer of the error values
- * Output: An array representing the error polynomial
+ * @param {number[]} roots Array containing the roots of the error locator polynomial
+ * @param {number[]} values Array containing the error values
+ * @returns {number[]} Array representing the error polynomial
  */
 function errorPoly(roots, values) {
     if (roots.length === 0 || values.length === 0) {

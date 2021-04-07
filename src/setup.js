@@ -1,13 +1,14 @@
 import fs from 'fs';
 import * as arith from "../util/arithmetic.js";
+
 import { config } from "../util/data_processing.js";
 import { toPoly, projectRoot } from "./main.js";
 export { codeGenerator, parseArgs, generateTables };
 
-/*
+/**
  * Makes a new config object with values from the command line
- * Input: config object
- * Output: new config object with added/updated values
+ * @param {config} cfg A config object
+ * @returns {config} A new config object with added/updated values
  */
 function parseArgs(cfg) {
     let config = JSON.parse(JSON.stringify(cfg));
@@ -24,16 +25,16 @@ function parseArgs(cfg) {
             case 'e': config.mode = "encode"; break;
             case 'd': config.mode = "decode"; break;
             case 'h': help(); break;
-            default : console.log(arg + " is not a valid argument try -h"); break;
+            default: console.log(arg + " is not a valid argument try -h"); break;
         };
     };
 
     // display help information about each argument
     function help() {
         console.log("Some argements like e and d are mutually exclusive speciying both",
-                    "will result in the latter overwriting the first.\n");
+            "will result in the latter overwriting the first.\n");
         console.log("If they are not mutually exclusive it will result in the arguments",
-                    "being run twice -h -h for instance\n");
+            "being run twice -h -h for instance\n");
         console.log("e: sets the program to encoding mode\n");
         console.log("d: sets the program in decoding mode\n");
     }
@@ -41,14 +42,11 @@ function parseArgs(cfg) {
     return config;
 }
 
-/*
- * Input: void (though the global config struct needs to be defined)
- *
- * Output:
- * two tables first toIndex which takes a polinomial form as a number of an element
- * and gives the index the polynomial form 0 has no defined value index in this table
- * so toIndex[0] is undefined
- * second is toPoly which given an element index gives the polynomial form as a number
+/**
+ * Generates tables to allow quick conversion between the polynomial and index form of elements in the galois field. Requires a defined global config object.
+ * @returns Two tables: toIndex and toPoly.
+ * toIndex takes a polynomial form as a number of an element in the galois field and returns the index. (Polynomial form 0 has no index so toIndex[0] is undefined)
+ * toPoly takes takes an element index and returns the matching polynomial form as a number
  */
 function generateTables() {
     let size = 2 ** config.symbolSize;
@@ -87,9 +85,9 @@ function generateTables() {
     return [toIndex, toPoly];
 }
 
-/*
- * Input: Void (although config.codeSize and config.messageSize have to be defined)
- * Output: An array representing the code generator polynomial
+/**
+ * Gets the code generator polynomial. codeSize and messageSize must be defined in the global config object
+ * @returns An array representing the code generator polynomial.
  */
 function codeGenerator() {
     let nFactor = config.codeSize - config.messageSize;
