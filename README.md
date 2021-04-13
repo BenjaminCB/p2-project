@@ -25,7 +25,7 @@ The program is configurable to run the users desired settings using config.JSON:
       This file would be identical to "input.txt", if the limits of the program have been complied with.
       Also creates "diff.txt", that compares the diffrences between "decoded.txt" and "input.txt".
 
-6. To teskt from binary: @@
+6. To text from binary: @@
 
 # Info
 Polynomials are represented with arrays, probably of a fixed length and typed
