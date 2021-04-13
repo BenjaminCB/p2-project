@@ -3,13 +3,13 @@ Collection of code files for 2. semester p2-project, spanding from January to Ma
 
 # Program
 The program is a local simulation of the use of Reed-solomon code, used for error-detection and -correction.
-The program is configurable to run the users desired settings using config.JSON:
+The program is configurable through the config.JSON file:
 
 1. From tekst to binary: 
 
       @@
 
-2. Input is a .txt file written in UFC-8. (@@@ Lige nu er det binær data og ikke 'karakter-tekst' @@@)
+2. Input is a .txt file written in UTF-8. (Lige nu er det binært-data og ikke 'karakter-tekst')
 
 3. Encodeing-run:
        
