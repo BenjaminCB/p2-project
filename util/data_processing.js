@@ -1,5 +1,5 @@
 import fs from 'fs';
-export { config, binaryToPolys, strToBinaryStr, polysToBinaryStr };
+export { config, binaryToPolys, strToBinaryStr, polysToBinaryStr, binaryToStr, strToPolys, polysToStr };
 
 const projectRoot = process.cwd();
 let config = parseConfig()
@@ -38,29 +38,6 @@ function binaryToPolys(data, size) {
 }
 
 /**
- * Turn a utf-8 string into a a string of binary data
- * @param {string} string to be converted to binary data
- * @returns {string} A binary string representation of the parameter string
- */
-function strToBinaryStr(str) {
-    let charCodes = [];
-
-    for (let i = 0; i < str.length; i++) {
-        charCodes[i] = str.charCodeAt(i);
-    };
-
-    let binaryStrings = charCodes.map(charCode => charCode.toString(2));
-    binaryStrings = binaryStrings.map(charCode => {
-        while (charCode.length < 8) {
-            charCode = "0" + charCode;
-        }
-        return charCode;
-    });
-
-    return binaryStrings.reduce((acc, val) => acc += val);
-}
-
-/**
  * Converts an array of polynomial messages into a single binary string
  * @param {number[]} polys Array containin polynomial messages
  * @returns A binary string representation of the polynomials
@@ -77,4 +54,52 @@ function polysToBinaryStr(polys) {
         polys[i] = polys[i].join("");
     };
     return polys.join("");
+}
+
+/**
+ * Turn a text-string into a a string of binary data
+ * @param {string} string to be converted to binary data
+ * @returns {string} A binary string representation of the parameter string
+ */
+function strToBinaryStr(str) {
+    let charCodes = [];
+
+    for (let i = 0; i < str.length; i++) {
+        charCodes[i] = str.charCodeAt(i);
+    };
+
+    let binaryStrings = charCodes.map(charCode => charCode.toString(2));
+    binaryStrings = binaryStrings.map(charCode => {
+        while (charCode.length < config.encoding) {
+            charCode = "0" + charCode;
+        }
+        return charCode;
+    });
+
+    return binaryStrings.reduce((acc, val) => acc += val);
+}
+
+/**
+ * Encodes a binary string into a text-string
+ * @param {string} binary to be converted to text-encoded string
+ * @returns {string} A text-string encoded from the parameter binary string
+ */
+function binaryToStr(binary) {
+    let str = "";
+
+    for (let i = 0; i < binary.length; i += config.encoding) {
+        str += String.fromCharCode(parseInt(binary.slice(i, i + config.encoding), 2));
+    }
+
+    return str;
+}
+
+function strToPolys(str) {
+    let binary = strToBinaryStr(str);
+    return binaryToPolys(binary, config.messageSize);
+}
+
+function polysToStr(polys) {
+    let binary = polysToBinaryStr(polys);
+    return binaryToStr(binary);
 }

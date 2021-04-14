@@ -4,7 +4,7 @@
     "symbolSize": 4,
     "fieldGenerator": 19,
     "mode": "encode",
-    "encoding" : "hex",
+    "encoding": 8,
     "errorChance": 2,
     "inputFile": "data/input.txt",
     "encodedFile": "data/encoded.txt",

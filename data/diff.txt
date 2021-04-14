@@ -1,0 +1,4 @@
+1c1
+< Dette er en parsing test
+---
+> Dette er en parsing test
