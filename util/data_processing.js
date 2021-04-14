@@ -1,5 +1,5 @@
 import fs from 'fs';
-export { config, binaryToPolys, strToBinaryStr, polysToBinaryStr };
+export { config, binaryToPolys, strToBinaryStr, polysToBinaryStr, binaryToStr, strToPolys, polysToStr };
 
 const projectRoot = process.cwd();
 let config = parseConfig()
@@ -88,8 +88,18 @@ function binaryToStr(binary) {
     let str = "";
 
     for (let i = 0; i < binary.length; i += config.encoding) {
-        str += String.fromCharCode(binary.slice(i, i + config.encoding), 2);
+        str += String.fromCharCode(parseInt(binary.slice(i, i + config.encoding), 2));
     }
 
     return str;
+}
+
+function strToPolys(str) {
+    let binary = strToBinaryStr(str);
+    return binaryToPolys(binary, config.messageSize);
+}
+
+function polysToStr(polys) {
+    let binary = polysToBinaryStr(polys);
+    return binaryToStr(binary);
 }
