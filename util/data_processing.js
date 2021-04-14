@@ -94,11 +94,21 @@ function binaryToStr(binary) {
     return str;
 }
 
+/**
+ * Converts a text string into array of polynomials
+ * @param {string} str 
+ * @returns Array of polynomials
+ */
 function strToPolys(str) {
     let binary = strToBinaryStr(str);
     return binaryToPolys(binary, config.messageSize);
 }
 
+/**
+ * Converts array of polynomials into text string
+ * @param {number[]} polys 
+ * @returns Text string from polynomials
+ */
 function polysToStr(polys) {
     let binary = polysToBinaryStr(polys);
     return binaryToStr(binary);
