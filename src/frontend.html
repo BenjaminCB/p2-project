@@ -13,22 +13,30 @@
                 background: #ffcccc;
                 font-family: 'Times New Roman', Times, serif;
             }
+            h3 {
+                padding: 20px;
+                margin: -10px;
+                
+                font-family: 'Times New Roman', Times, serif;
+            }
 
             input[type=text]{
-                width: 50%;
-                padding: 15px;
-                margin: 10px;
-                border: 1px solid #ccc;
+                height: 50px;
+                border: 1px solid;
                 border-radius: 4px;
                 border-color: black;
+                position: absolute;
+                margin: 0 auto;
+                left: 25%;
+                width: 50%;
             }
 
             input[type=submit] {
-                width: 50%;
+                width: 15%;
                 background-color: #4CAF50;
-                color: white;
-                padding: 14px 20px;
-                margin: 8px 0;
+                color: black;
+                padding: 15px 10px;
+                margin: 60px 42%;
                 border: none;
                 border-radius: 4px;
                 cursor: pointer;
@@ -39,34 +47,47 @@
                 background-color: #ffcccc;
             }
 
+            
+
             .column{
+              background-color: #ffcccc;
               display: flex;
               flex-direction: column;
               align-items: center;
               width: 50%;
+              margin-bottom: 20px;
              
+            }
+
+            .row {
+              position: absolute;
+              margin: -40px auto;
+              left: 25%;
+              width: 100%;
             }
 
         </style> 
 
+
     </head>
-    <body style="background-color:#ffe6cc;">
+    <body style="background-color: #white;">
     <h1>Message Translater</h1>
+    <h3>Your Input</h3>
     
-        <label for="fname">Input</label>
-        <input type="text" id="fname" name="Input" placeholder="Your Input">
+        <label for="fname"></label>
+        <input type="text" id="fname" name="Input" placeholder="Write here...">
         <input type="submit" value="Submit">
 
         <div class="row">
-            <div class="column" style="background-color:#aaa;">
+            <div class="column">
               <h2>Column 1</h2>
               <p>Some text..</p>
             </div>
-            <div class="column" style="background-color:#bbb;">
+            <div class="column">
               <h2>Column 2</h2>
               <p>Some text..</p>
             </div>
-            <div class="column" style="background-color:#ccc;">
+            <div class="column">
               <h2>Column 3</h2>
               <p>Some text..</p>
             </div>
