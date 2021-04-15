@@ -26,18 +26,20 @@ rl.on('line', line => {
         let block = line.slice(i, i + bitsPerBlock);
         let min = 0;
         let max = 9999;
+        const maxSpand = 2;
+        const chance = 100/50;
         
-        let indexMax = ( 2 * config.symbolSize );           // Maximum reach of the burst error
+        let indexMax = (maxSpand * config.symbolSize);           // Maximum reach of the burst error
         
         // if the errorChance is an un-even number:
         // Insure that we don't create more errors, than can be handled
-        if (config.errorChance % 2 === 1){
-            indexMax = config.errorChance;
+        if ( (config.errorChance % maxSpand) === 1){
+            indexMax = config.symbolSize;
         };
         
-        
+        let k = 0;
         // Finds errorChance amount of index'es (total)
-        for (let k = 0; k < config.errorChance; k++) {
+        for (; k < config.errorChance; k++) {
             let index = Math.trunc(Math.random() * (max - min) + min) % bitsPerBlock;     // Tal mellem 0 og bitsPerBlock
             console.log(i + " " + index);
             
@@ -46,9 +48,9 @@ rl.on('line', line => {
 
             // loop from some point in a symbol to the end of the following syndrome
             // TODO: Kunne ændre på hvad chancen for at hver bit flipper, dynamisk/config
-            // This vil 'centralize' errors into clumps of up to 2 symbols
+            // This vil 'centralize' errors into clumps of up to maxSpand symbols
             do{
-                if (1 === ( (Math.trunc(Math.random() * (max - min) + min) % 2) ) ) {
+                if (1 === ( (Math.trunc(Math.random() * (max - min) + min) % chance) ) ) {
                     if (block[index] === "1") {
                         block = block.substr(0, index) +
                         "0" +
@@ -74,17 +76,17 @@ rl.on('line', line => {
                     doubleSyndrome++;
                 }
                 
-                // insure we revert back, so the bust error can stretch 2 syndromes
-                indexMax = (2 * config.symbolSize);
-
-
+                // insure we revert back, so the bust error can stretch maxSpand syndromes
+                indexMax = (maxSpand * config.symbolSize);
                 index++;
-                if (doubleSyndrome === config.symbolSize) {
+
+                if ( ((doubleSyndrome + startIndex) % config.symbolSize) === 0) {
                     k++;
                 }
+                console.log(index + "    " + doubleSyndrome + "   " + k);
 
             }while (doubleSyndrome + startIndex !== indexMax && index !== bitsPerBlock && k < config.errorChance);
-    };
+        };
 
         /*
         // inject errors
