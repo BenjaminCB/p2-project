@@ -36,14 +36,13 @@ if (config.mode === "encode") {
         const time = Date.now();
 
         //convert read text-string to polynomials
-        const [msgs, leftover] = data.strToPolys(line);
+        const msgs = data.strToPolys(line);
 
         //actual encoding
         let encodedMsgs = [];
         for (let i = 0; i < msgs.length; i++) {
             encodedMsgs[i] = encode.encodeBlock(msgs[i]);
         }
-        encodedMsgs[encodedMsgs.length] = leftover;
 
         // for all the message polynomials encode every coefficient to a binary string
         // Then join coefficients withouth a space then join polynomials with a space
@@ -83,14 +82,13 @@ if (config.mode === "encode") {
         const time = Date.now();
 
         //convert read encoded binary string to polynomials
-        let [received, leftover] = data.binaryToPolys(line, config.codeSize),
+        let received = data.binaryToPolys(line, config.codeSize),
             decoded = [];
 
         //actual decoding
         for (let i = 0; i < received.length; i++) {
             decoded[i] = decode.decodeBlock(received[i]);
         }
-        decoded[decoded.length] = leftover;
 
         // convert decoded messages to a text-string
         let str = data.polysToStr(decoded);

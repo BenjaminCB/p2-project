@@ -27,14 +27,15 @@ function binaryToPolys(data, size) {
         }
     }
 
-    // if (coefficients.length > 0) {
-    //     while (coefficients.length < size) {
-    //         coefficients.push(0);
-    //     }
-    //     polynomials.push(coefficients);
-    // }
+    //padding of leftover message
+    if (coefficients.length > 0) {
+        while (coefficients.length < size) {
+            coefficients.push(0);
+        }
+        polynomials.push(coefficients);
+    }
 
-    return [polynomials, coefficients];
+    return polynomials;
 }
 
 /**
@@ -88,7 +89,11 @@ function binaryToStr(binary) {
     let str = "";
 
     for (let i = 0; i < binary.length; i += config.encoding) {
-        str += String.fromCharCode(parseInt(binary.slice(i, i + config.encoding), 2));
+        let charCode = parseInt(binary.slice(i, i + config.encoding), 2);
+        //console.log(`code: ${charCode} \t char: ${String.fromCharCode(charCode)}`);
+        if (charCode != 0) {
+            str += String.fromCharCode(charCode);
+        }
     }
 
     return str;
