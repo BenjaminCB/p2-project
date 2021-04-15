@@ -4,7 +4,7 @@
         <title>Page Title</title>
         <style>
             h1 {
-                padding: 50px;
+                padding: 40px;
                 height: 80px;
                 margin: -10px;
                 text-align: center;
@@ -40,14 +40,11 @@
                 border: none;
                 border-radius: 4px;
                 cursor: pointer;
-    
             }
 
             input[type=submit]:hover {
                 background-color: #ffcccc;
             }
-
-            
 
             .column{
               background-color: #ffcccc;
@@ -68,15 +65,16 @@
 
         </style> 
 
-
     </head>
     <body style= "background-color: #ffffff";>
     <h1>Message Translater</h1>
     <h3>Your Input</h3>
     
+    <form action="/action_page.php">
         <label for="fname"></label>
         <input type="text" id="fname" name="Input" placeholder="Write here...">
         <input type="submit" value="Submit">
+    </form>
 
         <div class="row">
             <div class="column">
