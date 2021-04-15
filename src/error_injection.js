@@ -29,9 +29,10 @@ rl.on('line', line => {
         
         let indexMax = ( 2 * config.symbolSize );           // Maximum reach of the burst error
         
-        // Insure that we don't more errors then can be handled
+        // if the errorChance is an un-even number:
+        // Insure that we don't create more errors, than can be handled
         if (config.errorChance % 2 === 1){
-            indexMax /= 2;
+            indexMax = config.errorChance;
         };
         
         
@@ -42,6 +43,7 @@ rl.on('line', line => {
             
             let doubleSyndrome = 0;                             // Used to count the mount of spaces that have been looked at with possible change
             const startIndex = ( index % config.symbolSize );   // Starting point
+
             // loop from some point in a symbol to the end of the following syndrome
             // TODO: Kunne ændre på hvad chancen for at hver bit flipper, dynamisk/config
             // This vil 'centralize' errors into clumps of up to 2 symbols
@@ -72,10 +74,9 @@ rl.on('line', line => {
                     doubleSyndrome++;
                 }
                 
-                // After the óne, 1 syndrome error, makes it possible to spand over 2 syndromes again.
-                if (k % 2 === 1){
-                    indexMax = ( 2 * config.symbolSize );
-                }
+                // insure we revert back, so the bust error can stretch 2 syndromes
+                indexMax = (2 * config.symbolSize);
+
 
                 index++;
                 if (doubleSyndrome === config.symbolSize) {
