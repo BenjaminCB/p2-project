@@ -25,24 +25,26 @@ rl.on('line', line => {
     for (let i = 0; i < line.length; i += bitsPerBlock) {
         let block = line.slice(i, i + bitsPerBlock);
         let min = 0;
-        let max = 1000000;
+        let max = 9999;
+        
+        let indexMax = ( 2 * config.symbolSize );           // Maximum reach of the burst error
+        
+        // Insure that we don't more errors then can be handled
+        if (config.errorChance % 2 === 1){
+            indexMax /= 2;
+        };
+        
+        
         // Finds errorChance amount of index'es (total)
         for (let k = 0; k < config.errorChance; k++) {
             let index = Math.trunc(Math.random() * (max - min) + min) % bitsPerBlock;     // Tal mellem 0 og bitsPerBlock
-            console.log(i+ " " + index);
-
-            let doubleSyndrome = 0;             // Used to count the mount of spaces that have been changed
+            console.log(i + " " + index);
+            
+            let doubleSyndrome = 0;                             // Used to count the mount of spaces that have been looked at with possible change
             const startIndex = ( index % config.symbolSize );   // Starting point
-            let indexMax = ( 2 * config.symbolSize );   // Maximum reack of the burst error
-
-            if (k % 2 === 1){
-                indexMax /= 2;
-            };
-
-
             // loop from some point in a symbol to the end of the following syndrome
             // TODO: Kunne ændre på hvad chancen for at hver bit flipper, dynamisk/config
-            // if (0 === Math.trunc(Math.random() * 1000) % 2){
+            // This vil 'centralize' errors into clumps of up to 2 symbols
             do{
                 if (1 === ( (Math.trunc(Math.random() * (max - min) + min) % 2) ) ) {
                     if (block[index] === "1") {
@@ -65,13 +67,21 @@ rl.on('line', line => {
                         throw Error("Not a bit");
                     }
                 }
+                // Insure that the skipped Index is counted
                 else {
                     doubleSyndrome++;
                 }
+                
+                // After the óne, 1 syndrome error, makes it possible to spand over 2 syndromes again.
+                if (k % 2 === 1){
+                    indexMax = ( 2 * config.symbolSize );
+                }
+
                 index++;
                 if (doubleSyndrome === config.symbolSize) {
                     k++;
                 }
+
             }while (doubleSyndrome + startIndex !== indexMax && index !== bitsPerBlock && k < config.errorChance);
     };
 
