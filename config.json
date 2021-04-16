@@ -2,7 +2,6 @@
     "codeSize": 15,
     "messageSize": 11,
     "symbolSize": 4,
-    "fieldGenerator": 19,
     "mode": "encode",
     "encoding": 8,
     "errorChance": 2,

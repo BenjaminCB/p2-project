@@ -1,12 +1,22 @@
 import fs from 'fs';
 export { config, binaryToPolys, strToBinaryStr, polysToBinaryStr, binaryToStr, strToPolys, polysToStr };
 
+//Table of numerical values of field generator values, first index is for galois field GF(2^2)
+const fieldGenerator = [7, 11, 19, 37, 67, 131, 333];
 const projectRoot = process.cwd();
 let config = parseConfig()
 
 function parseConfig() {
     const configFile = fs.readFileSync(projectRoot + "/config.json");
     let config = JSON.parse(configFile);
+
+    //Automatic field generator setup based on symbol size
+    if (config.symbolSize < 2 || config.symbolSize > 8) {
+        console.log(`Symbol size ${config.symbolSize} not supported, reverting to default symbol size 4`);
+        config.symbolSize = 4;
+    }
+    config.fieldGenerator = fieldGenerator[config.symbolSize - 2];
+
     return config;
 }
 
