@@ -16,76 +16,56 @@ const rl = readline.createInterface({
 // Log what we are going to do
 console.log(`Reading lines from: ${config.errorFile}\nWriting error injected lines to file: ${config.errorFile}`);
 
-// on line inject it with errors
+// *possible* to create multible burst errors across maxSymbolSpand symbols = config.symbolSize
+//  From random starting point to end of current symbol, or up to and with maxSymbolSpand
 rl.on('line', line => {
     let buffer = "";
 
     debugger;
-    // split the line into strings of length symbolsize whin possible
+    // split the line into strings of length symbolsize width, if possible
     for (let i = 0; i < line.length; i += bitsPerBlock) {
         let block = line.slice(i, i + bitsPerBlock);
-        let min = 0;
-        let max = 9999;
-        const maxSpand = 2;
-        const chance = 100/50;
+
+        const maxSymbolSpand = 2;       // Kunne gøres så bruger skal skrive et input
+        const chance = 3;               // 1/tal , 1 over <--
         
-        let indexMax = (maxSpand * config.symbolSize);           // Maximum reach of the burst error
+        let indexMax = (maxSymbolSpand * config.symbolSize);           // Maximum reach of the burst error
         
         // if the errorChance is an un-even number:
         // Insure that we don't create more errors, than can be handled
-        if ( (config.errorChance % maxSpand) === 1){
+        if ( (config.errorChance % maxSymbolSpand) === 1){
             indexMax = config.symbolSize;
         };
-        
-        let k = 0;
+
         // Finds errorChance amount of index'es (total)
-        for (; k < config.errorChance; k++) {
-            let index = Math.trunc(Math.random() * (max - min) + min) % bitsPerBlock;     // Tal mellem 0 og bitsPerBlock
+        for (let k = 0; k < config.errorChance; k++) {
+            let index = randomNumber(0,100) % bitsPerBlock; 
             console.log(i + " " + index);
             
-            let doubleSyndrome = 0;                             // Used to count the mount of spaces that have been looked at with possible change
+            let doubledoubleSymbol = 0;                             // Used to count the mount of spaces that have been looked at with possible change
             const startIndex = ( index % config.symbolSize );   // Starting point
-
-            // loop from some point in a symbol to the end of the following syndrome
-            // TODO: Kunne ændre på hvad chancen for at hver bit flipper, dynamisk/config
-            // This vil 'centralize' errors into clumps of up to maxSpand symbols
+            
+            // Flips a bit if allowed to
             do{
-                if (1 === ( (Math.trunc(Math.random() * (max - min) + min) % chance) ) ) {
-                    if (block[index] === "1") {
-                        block = block.substr(0, index) +
-                        "0" +
-                        block.substr(index + 1);
-
-                        console.log(`chaged ${index} from 0 to 1`);
-                        doubleSyndrome++;
-
-                    } else if (block[index] === "0") {
-                        block = block.substr(0, index) +
-                        "1" +
-                        block.substr(index + 1);
-
-                        console.log(`chaged ${index} from 1 to 0`);
-                        doubleSyndrome++;
-    
-                    } else {
-                        throw Error("Not a bit");
-                    }
+                if (1 === ( randomNumber(0,100) % chance) )  {
+                    buffer += flip(block, index);
+                    doubleSymbol++;
                 }
                 // Insure that the skipped Index is counted
                 else {
-                    doubleSyndrome++;
+                    doubleSymbol++;
                 }
                 
-                // insure we revert back, so the bust error can stretch maxSpand syndromes
-                indexMax = (maxSpand * config.symbolSize);
+                // insure we revert back, so the bust error can only stretch maxSymbolSpand Symbols
+                indexMax = (maxSymbolSpand * config.symbolSize);
                 index++;
 
-                if ( ((doubleSyndrome + startIndex) % config.symbolSize) === 0) {
+                if ( ((doubledoubleSymbol + startIndex) % config.symbolSize) === 0) {
                     k++;
                 }
-                console.log(index + "    " + doubleSyndrome + "   " + k);
+                console.log(index + "    " + doubledoubleSymbol + "   " + k);
 
-            }while (doubleSyndrome + startIndex !== indexMax && index !== bitsPerBlock && k < config.errorChance);
+            }while (doubledoubleSymbol + startIndex !== indexMax && index !== bitsPerBlock && k < config.errorChance);
         };
 
         /*
@@ -110,6 +90,56 @@ rl.on('close', () => {
     console.log("Error injection finished\n");
 });
 
+
+// 1 continius, singular burst error
+rl.on('line', line => {
+    let buffer = "";
+
+    // split the line into strings of length symbolsize whin if possible
+    for (let i = 0; i < line.length; i += bitsPerBlock) {
+        let block = line.slice(i, i + bitsPerBlock);
+
+        const maxSymbolSpand = config.errorChance;
+        let k = 0;
+        let flips = 0;
+        
+        let indexMax = (maxSymbolSpand * config.symbolSize);        // Maximum reach of the burst error
+        let index = randomNumber(0,1000) % bitsPerBlock;             // Tal mellem 0 og bitsPerBlock
+        const startIndex = ( index % config.symbolSize );           // Starting point
+        
+        
+        const chance = 3;  // 1/tal , 1 over <--
+        do{
+            if (1 === ( randomNumber(0,1000) % chance) )  {    // !!!!!!!!! Er ikke 100% tilfældigt da det største tal skal gå op i chance !!!!!!!!!!
+                buffer += flip(block, index);
+                flips++;
+            }
+            // Insure that the skipped Index is counted
+            else {
+                flips++
+            }
+            index++;
+            
+            // insure we revert back, so the bust error can only stretch maxSymbolSpand Symbols
+            if ( ((flips + startIndex) % config.symbolSize) === 0) {
+                k++;
+            }
+            console.log(index + "    " + flips + "   " + k);
+        }while (flips + startIndex !== indexMax && index !== bitsPerBlock && k < maxSymbolSpand);
+
+        buffer += block;
+    };
+
+    wl.write(buffer + "\n");
+});
+
+// on close print summary
+rl.on('close', () => {
+    console.log("Error injection finished\n");
+});
+
+
+
 /**
  * Returns the string with a bit flipped
  * @param {string, number} a bit string and an index to be flipped
@@ -127,6 +157,10 @@ function flip(str, bit) {
 
     return str.substr(0, bit) + flipped + str.substr(bit + 1);
 }
+function randomNumber(min, max) {
+    return (Math.trunc(Math.random() * (max - min) + min));
+}
+
 
 function randomSymbol() {
     let num = Math.trunc( (2 ** config.symbolSize - 1) * Math.random() ),
