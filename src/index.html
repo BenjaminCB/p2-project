@@ -31,7 +31,7 @@
                 width: 50%;
             }
 
-            input[type=submit] {
+            input[type=button] {
                 width: 15%;
                 background-color: #4CAF50;
                 color: black;
@@ -42,7 +42,7 @@
                 cursor: pointer;
             }
 
-            input[type=submit]:hover {
+            input[type=button]:hover {
                 background-color: #ffcccc;
             }
 
@@ -70,25 +70,50 @@
     <h1>Message Translater</h1>
     <h3>Your Input</h3>
 
-    <form action="/action_page.php"> 
         <label for="fname"></label>
         <input type="text" id="fname" name="Input" placeholder="Write here...">
-        <input type="submit" value="Submit">
-    </form>
+        <input type="button" id="button" value="Submit"> 
+        
+    
 
         <div class="row">
             <div class="column">
-              <h2>Column 1</h2>
-              <p>Some text..</p>
+              <h2>Endcode</h2>
+              <p id="res">Some text..</p>
             </div>
             <div class="column">
-              <h2>Column 2</h2>
-              <p>Some text..</p>
+              <h2>Error</h2>
+              <p id="1">Some text..</p>
             </div>
             <div class="column">
-              <h2>Column 3</h2>
-              <p>Some text..</p>
+              <h2>Decode</h2>
+              <p id="2">Some text..</p>
             </div>
           </div>
+
+      <script>
+        let bt = document.getElementById("button");
+        let data = document.getElementById("fname");
+        let ws = new WebSocket("ws://localhost:3000/");
+        let endcode = document.getElementById("res");
+        let error = document.getElementById("1");
+        let decode = document.getElementById("2");
+
+        ws.addEventListener("open",() => {
+          console.log("Dav");
+        });
+        bt.addEventListener("click", () =>{
+          ws.send(data.value);
+        });
+        ws.addEventListener("message", (received) => {
+          let [eventname, eventdata]=received.data.split("=");
+          console.log(eventname);
+          console.log(eventdata);
+        if (eventname === "endcode"){
+          endcode.innerText=eventdata;
+        }
+        });
+
+      </script>
     </body>
 </html>

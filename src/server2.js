@@ -29,8 +29,13 @@ wsServer.on('request', (req) => {
     connections.push(connection);
     console.log((new Date()) + ' Connection accepted.');
 
-    // connection.on('message', msg => {
-        // console.log(JSON.stringify(msg));
-        // connections.forEach(c => c.sendUTF( JSON.stringify(msg) ));
-    // });
+    connection.on('message', msg => {
+    let remove_leftover = msg.utf8Data;
+    remove_leftover += "Fisk";
+    let event = "endcode=";
+    connection.sendUTF(event + remove_leftover);
+
+    });
+
+
 });
