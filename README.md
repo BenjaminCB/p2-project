@@ -3,13 +3,13 @@ Collection of code files for 2. semester p2-project, spanding from January to Ma
 
 # Program
 The program is a local simulation of the use of Reed-solomon code, used for error-detection and -correction.
-The program is configurable to run the users desired settings using config.JSON:
+The program is configurable through the config.JSON file:
 
 1. From tekst to binary: 
 
       @@
 
-2. Input is a .txt file written in UFC-8. (@@@ Lige nu er det binær data og ikke 'karakter-tekst' @@@)
+2. Input is a .txt file written in UTF-8. (Lige nu er det binært-data og ikke 'karakter-tekst')
 
 3. Encodeing-run:
        
@@ -25,7 +25,7 @@ The program is configurable to run the users desired settings using config.JSON:
       This file would be identical to "input.txt", if the limits of the program have been complied with.
       Also creates "diff.txt", that compares the diffrences between "decoded.txt" and "input.txt".
 
-6. To teskt from binary: @@
+6. To text from binary: @@
 
 # Info
 Polynomials are represented with arrays, probably of a fixed length and typed
