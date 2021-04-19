@@ -1,0 +1,74 @@
+body {
+  background-image: url("./image/marble");
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+h1 {
+    padding: 35px;
+    height: 80px;
+    margin: -10px;
+    text-align: center;
+    vertical-align: center;
+    font-size: 70px;
+    background: #ffcccc;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+h3 {
+    padding: 20px;
+    margin: -10px;
+    text-align: justify-all;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+input[type=text]{
+    height: 50px;
+    border: 1px solid;
+    border-radius: 4px;
+    border-color: black;
+    position: absolute;
+    margin: 0 auto;
+    left: 25%;
+    width: 50%;
+}
+
+input[type=button] {
+    width: 15%;
+    background-color: white;
+    color:black;
+    border-color:black;
+    padding: 15px 10px;
+    margin: 60px 42%;
+    border-radius: 2px;
+    cursor: pointer;
+    border: 1px solid;
+}
+
+input[type=button]:hover {
+    background-color: #ffcccc;
+}
+
+.time{
+  background-color: #ffcccc;
+  display: flex;
+  align-items:center;
+  width: 7%;
+
+  margin-bottom: 20px;
+}
+.column{
+  background-color: #ffcccc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50%;
+  margin-bottom: 20px;
+}
+
+.row {
+  position: absolute;
+  margin: -40px auto;
+  left: 25%;
+  width: 100%;
+}

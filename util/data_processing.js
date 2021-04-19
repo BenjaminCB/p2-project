@@ -1,5 +1,5 @@
 import fs from 'fs';
-export { config, binaryToPolys, strToBinaryStr, polysToBinaryStr, binaryToStr, strToPolys, polysToStr };
+export { config, parseConfig, binaryToPolys, strToBinaryStr, polysToBinaryStr, binaryToStr, strToPolys, polysToStr };
 
 //Table of numerical values of field generator values, first index is for galois field GF(2^2)
 const fieldGenerator = [7, 11, 19, 37, 67, 131, 333];
@@ -111,7 +111,7 @@ function binaryToStr(binary) {
 
 /**
  * Converts a text string into array of polynomials
- * @param {string} str 
+ * @param {string} str
  * @returns Array of polynomials
  */
 function strToPolys(str) {
@@ -121,7 +121,7 @@ function strToPolys(str) {
 
 /**
  * Converts array of polynomials into text string
- * @param {number[]} polys 
+ * @param {number[]} polys
  * @returns Text string from polynomials
  */
 function polysToStr(polys) {
