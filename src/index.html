@@ -3,8 +3,16 @@
     <head>          
         <title>Page Title</title>
         <style>
+
+            body {
+              background-image: url('marble.jpg');
+              background-size: cover;
+              background-attachment: fixed;
+            }
+
+
             h1 {
-                padding: 40px;
+                padding: 35px;
                 height: 80px;
                 margin: -10px;
                 text-align: center;
@@ -16,7 +24,7 @@
             h3 {
                 padding: 20px;
                 margin: -10px;
-                
+                text-align: justify-all;
                 font-family: 'Times New Roman', Times, serif;
             }
 
@@ -33,19 +41,28 @@
 
             input[type=button] {
                 width: 15%;
-                background-color: #4CAF50;
-                color: black;
+                background-color: white;
+                color:black;
+                border-color:black;
                 padding: 15px 10px;
                 margin: 60px 42%;
-                border: none;
-                border-radius: 4px;
+                border-radius: 2px;
                 cursor: pointer;
+                border: 1px solid;
             }
 
             input[type=button]:hover {
                 background-color: #ffcccc;
             }
 
+            .time{
+              background-color: #ffcccc;
+              display: flex;
+              align-items:center;
+              width: 7%;
+              
+              margin-bottom: 20px;
+            }
             .column{
               background-color: #ffcccc;
               display: flex;
@@ -53,7 +70,6 @@
               align-items: center;
               width: 50%;
               margin-bottom: 20px;
-             
             }
 
             .row {
@@ -62,11 +78,10 @@
               left: 25%;
               width: 100%;
             }
-
         </style> 
 
     </head>
-    <body style= "background-color: #ffffff";>
+    <body>
     <h1>Message Translater</h1>
     <h3>Your Input</h3>
 
@@ -74,20 +89,23 @@
         <input type="text" id="fname" name="Input" placeholder="Write here...">
         <input type="button" id="button" value="Submit"> 
         
-    
-
         <div class="row">
+          
             <div class="column">
               <h2>Endcode</h2>
-              <p id="res">Some text..</p>
+              <p id="EC"></p>
             </div>
             <div class="column">
               <h2>Error</h2>
-              <p id="1">Some text..</p>
+              <p id="ERR"></p>
             </div>
             <div class="column">
               <h2>Decode</h2>
-              <p id="2">Some text..</p>
+              <p id="DC"></p>
+            </div>
+            <div class="time">
+              <h2></h2>
+              <p id="DC"></p>
             </div>
           </div>
 
@@ -95,12 +113,13 @@
         let bt = document.getElementById("button");
         let data = document.getElementById("fname");
         let ws = new WebSocket("ws://localhost:3000/");
-        let endcode = document.getElementById("res");
-        let error = document.getElementById("1");
-        let decode = document.getElementById("2");
+        let endcode = document.getElementById("EC");
+        let error = document.getElementById("ERR");
+        let decode = document.getElementById("DC");
 
+// Commentstart on column 1 
         ws.addEventListener("open",() => {
-          console.log("Dav");
+          console.log("hej-endcode");
         });
         bt.addEventListener("click", () =>{
           ws.send(data.value);
@@ -113,7 +132,39 @@
           endcode.innerText=eventdata;
         }
         });
-
+// Comment end on column 1
+// Commentstart on column 2
+        ws.addEventListener("open",() => {
+          console.log("hej-error");
+        });
+        bt.addEventListener("click", () =>{
+          ws.send(data.value);
+        });
+        ws.addEventListener("message", (received) => {
+          let [eventname, eventdata]=received.data.split("=");
+          console.log(eventname);
+          console.log(eventdata);
+        if (eventname === "error"){
+          error.innerText=eventdata;
+        }
+        });
+// Comment end on column 2
+// Commentstart on column 3
+ws.addEventListener("open",() => {
+          console.log("hej-decode");
+        });
+        bt.addEventListener("click", () =>{
+          ws.send(data.value);
+        });
+        ws.addEventListener("message", (received) => {
+          let [eventname, eventdata]=received.data.split("=");
+          console.log(eventname);
+          console.log(eventdata);
+        if (eventname === "decode"){
+          decode.innerText=eventdata;
+        }
+        });
+// Comment end on column 3
       </script>
     </body>
 </html>
