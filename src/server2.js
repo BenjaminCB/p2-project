@@ -2,6 +2,10 @@ import http from "http";
 import websocket from "websocket";
 import fs from "fs";
 import url from "url";
+import shelljs from "shelljs";
+import * as data from "../util/data_processing.js";
+
+const cwd = process.cwd();
 
 const clientHTML = fs.readFileSync("./src/index.html");
 
@@ -30,12 +34,27 @@ wsServer.on('request', (req) => {
     console.log((new Date()) + ' Connection accepted.');
 
     connection.on('message', msg => {
-    let remove_leftover = msg.utf8Data;
-    remove_leftover += "Fisk";
+    let after_msg = msg.utf8Data;
+    let config = JSON.parse(cwd+"/../config.json");
+    fs.writeFileSync(config.inputFile, after_msg);
+    shelljs.exec("../run.sh");
     let event = "endcode=";
-    connection.sendUTF(event + remove_leftover);
+    let read = fs.readFileSync(config.encodedFile);
+    connection.sendUTF(event + read);
+    }); 
 
+    connection.on('message', msg => {
+        let remove_leftover = msg.utf8Data;
+        remove_leftover += "yeah";
+        let event = "error=";
+        connection.sendUTF(event + remove_leftover);
     });
 
-
+    connection.on('message', msg => {
+        let remove_leftover = msg.utf8Data;
+        remove_leftover += "Fladfisk";
+        let event = "decode=";
+        connection.sendUTF(event + remove_leftover);
+    });
 });
+
