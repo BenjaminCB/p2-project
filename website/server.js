@@ -12,7 +12,7 @@ const clientHTML = fs.readFileSync(cwd + "/website/index.html");
 let connections = [];
 
 let server = new http.Server();
-server.listen(3000);
+server.listen(8080);
 
 let wsServer = new websocket.server({
     httpServer: server
