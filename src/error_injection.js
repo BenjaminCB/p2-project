@@ -5,7 +5,7 @@ import * as data from "../util/data_processing.js";
 
 const projectRoot = process.cwd();
 let config = data.config;
-let errorstyle = process.argv[2];       //trailing argument when script is called
+let errorStyle = process.argv[2];       //trailing argument when script is called
 const bitsPerBlock = config.symbolSize * config.codeSize;
 let safeKeep = "";
 
@@ -23,7 +23,7 @@ console.log(`Reading lines from: ${config.encodedFile}\nWriting error injected l
  * *possible* to create multible burst errors across @maxSymbolSpand symbols === config.symbolSize
  * From random starting point to end of current symbol, or up to and with maxSymbolSpand
  */
-if (errorstyle === "multi") {
+if (errorStyle === "multi") {
     rl.on('line', line => {
         let buffer = "";
 
@@ -112,7 +112,7 @@ if (errorstyle === "multi") {
 
 
 // 1 continuous, singular burst error, 
-if (errorstyle === "single") {
+if (errorStyle === "single") {
     rl.on('line', line => {
         let buffer = "";
         /**
@@ -139,7 +139,7 @@ if (errorstyle === "single") {
             let flips = 0;                                                  // Amount of bits looked at
             
             let indexMax = (maxSymbolSpand * config.symbolSize);            // Maximum reach of the burst error
-            let index = randomNumber(0,bitsPerBlock);                       // Starting point
+            let index = randomNumber(0,bitsPerBlock-1);                       // Starting point
             const startIndex = ( index % config.symbolSize );               // Starting point relative to symbols
             
             
