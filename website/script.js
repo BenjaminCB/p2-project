@@ -13,14 +13,17 @@ bt.addEventListener("click", () =>{
     ws.send(data.value);
 });
 
+function bin2hex (data){
+    return parseInt(data, 2).toString(16).toUpperCase();
+}
 ws.addEventListener("message", (received) => {
     let [eventType, data] = received.data.split("=");
     console.log(eventType);
     switch (eventType) {
         case "encode":
-            encode.innerText = data; break;
+            encode.innerText = bin2hex(data); break;
         case "error":
-            error.innerText = data; break;
+            error.innerText = bin2hex(data); break;
         case "decode":
             decode.innerText = data; break;
         default:
@@ -28,3 +31,4 @@ ws.addEventListener("message", (received) => {
     }
     
 });
+
