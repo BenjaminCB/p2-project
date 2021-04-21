@@ -26,4 +26,5 @@ ws.addEventListener("message", (received) => {
         default:
             console.log("An unknown event was emmitted by the server");
     }
+    
 });
