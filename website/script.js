@@ -13,9 +13,29 @@ bt.addEventListener("click", () =>{
     ws.send(data.value);
 });
 
-function bin2hex (data){
-    return parseInt(data, 2).toString(16).toUpperCase();
+function bin2hex(data) {
+    let hex = "";
+
+    // go through every byte of the data string
+    for (let i = 0; i < data.length; i += 8) {
+        // extract the current byte from the data
+        let byte = data.slice(i, i + 8);
+
+        // if it is the last part of the data it might not be a complete byte
+        while (byte.length < 8) byte += "0";
+
+        // convert byte to hexadecimal
+        byte = parseInt(byte, 2).toString(16).toUpperCase();
+
+        // if the byte was all zeroes drop it
+        if (byte === "0") continue;
+
+        hex += byte + " ";
+    };
+
+    return hex;
 }
+
 ws.addEventListener("message", (received) => {
     let [eventType, data] = received.data.split("=");
     console.log(eventType);
@@ -29,6 +49,6 @@ ws.addEventListener("message", (received) => {
         default:
             console.log("An unknown event was emmitted by the server");
     }
-    
+
 });
 
