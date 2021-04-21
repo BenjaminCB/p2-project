@@ -1,6 +1,6 @@
 let bt = document.getElementById("button");
 let data = document.getElementById("fname");
-let ws = new WebSocket("ws://localhost:3000/");
+let ws = new WebSocket("ws://localhost:8080/");
 let encode = document.getElementById("EC");
 let error = document.getElementById("ERR");
 let decode = document.getElementById("DC");
