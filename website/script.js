@@ -27,8 +27,8 @@ function bin2hex(data) {
         // convert byte to hexadecimal
         byte = parseInt(byte, 2).toString(16).toUpperCase();
 
-        // if the byte was all zeroes drop it
-        if (byte === "0") continue;
+        // correct parsing of byte containing all zeroes
+        if (byte === "0") byte += "0";
 
         hex += byte + " ";
     };
