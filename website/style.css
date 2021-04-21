@@ -1,5 +1,5 @@
 body {
-  background-image: url("./image/marble"); 
+  background-image: url("./image/marble");
   background-size: cover;
   background-attachment: fixed;
 }
@@ -64,6 +64,7 @@ input[type=button]:hover {
   align-items: center;
   width: 50%;
   margin-bottom: 20px;
+  font-family: monospace;
 }
 
 .row {
