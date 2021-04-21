@@ -5,6 +5,7 @@ import * as data from "../util/data_processing.js";
 
 const projectRoot = process.cwd();
 let config = data.config;
+let errorstyle = process.argv[2];       //trailing argument when script is called
 const bitsPerBlock = config.symbolSize * config.codeSize;
 let safeKeep = "";
 
@@ -22,15 +23,15 @@ console.log(`Reading lines from: ${config.encodedFile}\nWriting error injected l
  * *possible* to create multible burst errors across @maxSymbolSpand symbols === config.symbolSize
  * From random starting point to end of current symbol, or up to and with maxSymbolSpand
  */
-/*
-rl.on('line', line => {
-    let buffer = "";
+if (errorstyle === "multi") {
+    rl.on('line', line => {
+        let buffer = "";
 
-    /**
-     * makes lines of @bitPerBlock size no matter the latout of the file
-     * if the string gets a sutable lenth inject error
-     *   else go to next line
-    * ////////////
+        /**
+         * makes lines of @bitPerBlock size no matter the latout of the file
+         * if the string gets a sutable lenth inject error
+         *   else go to next line
+        *////////////
         line = safeKeep + line.slice(0, line.length);
         safeKeep = line.slice(Math.floor(line.length / bitsPerBlock) * bitsPerBlock, line.length);
         line = line.slice(0, Math.floor(line.length / bitsPerBlock) * bitsPerBlock);
@@ -38,149 +39,153 @@ rl.on('line', line => {
             return;
         }
 
-    debugger;
-    // split the line into strings of length symbolsize width, if possible
-    for (let i = 0; i < line.length; i += bitsPerBlock) {
-        let block = line.slice(i, i + bitsPerBlock);
+        console.log("Error for current line starts here");
+
+        debugger;
+        // splits the read line into strings of symbolsize length
+        for (let i = 0; i < line.length; i += bitsPerBlock) {
+            let block = line.slice(i, i + bitsPerBlock);
 
 
-        const maxSymbolSpand = 2;       // Kunne gøres så bruger skal skrive et input
-        const chance = 3;               // Used to gereate number from 0 to <---
-        let indexMax = (maxSymbolSpand * config.symbolSize);           // Maximum reach of the burst error
-        
-        // if the errorChance is an un-even number:
-        // Insure that we don't create more errors, than can be handled, by makeing 1 burst that is only 1 config.symbolSize
-        if ( (config.errorChance % maxSymbolSpand) === 1){
-            indexMax = config.symbolSize;
-        };
-
-        // Finds errorChance amount of index'es (total)
-        for (let k = 0; k < config.errorChance; k++) {
-            let index = randomNumber(0, bitsPerBlock); 
-            console.log(i + " " + index);
+            const maxSymbolSpand = 2;                                   // Kunne gøres så bruger skal skrive et input
+            const chance = 3;                                           // Used to gereate number from 0 to and with <---
+            let indexMax = (maxSymbolSpand * config.symbolSize);        // Maximum reach of the burst error
             
-            let doubleSymbol = 0;                             // Used to count the mount of spaces that have been looked at with possible change
-            const startIndex = ( index % config.symbolSize );   // Starting point
-            
-            // Flips a bit if allowed to
-            do{
-                if (1 === ( randomNumber(0, chance) ))  {
-                    try {
-                    block = block.substr(0, index) +
-                    flip(block[index]) +
-                    block.substr(index + 1);
-                    } catch (err) {
-                        console.log("error occured");
-                        break;
+            // if the errorChance is an un-even number:
+            // Insure that we don't create more errors, than can be handled, by makeing 1 burst that is only 1 config.symbolSize
+            if ( (config.errorChance % 2) === 1){
+                indexMax = config.symbolSize;
+            };
+
+            // *possible* to create multible burst errors
+            for (let k = 0; k < config.errorChance; k++) {
+                let index = randomNumber(0, bitsPerBlock-1); 
+                console.log(i + " " + index);
+                
+                let doubleSymbol = 0;                                   // Used to count the amount of index'es that have been looked, and are possible to have changed
+                const startIndex = ( index % config.symbolSize );       // Starting point
+                
+                // Roll if the current index-bit shall be fliped
+                do{
+                    if (1 === ( randomNumber(0, chance) ))  {
+                        try {
+                        block = block.substr(0, index) +
+                        flip(block[index]) +
+                        block.substr(index + 1);
+                        } catch (err) {
+                            console.log("error occured");
+                            break;
+                        }
                     }
                     doubleSymbol++;
-                }
-                // Insure that the skipped Index is counted
-                else {
-                    doubleSymbol++;
-                }
+                    index++;
+                    // insure we revert back, so the bust error can stretch maxSymbolSpand Symbols
+                    
+
+                    if ( ( (doubleSymbol + startIndex) % config.symbolSize ) === 0) {
+                        k++;
+                    }
+
+                    // Logs the current state of everything
+                    console.log(index + "    " + startIndex + "+" + doubleSymbol + "   " + k);
+                }while (doubleSymbol + startIndex !== indexMax && index !== bitsPerBlock-1 && k < config.errorChance);
                 
-                // insure we revert back, so the bust error can stretch maxSymbolSpand Symbols
                 indexMax = (maxSymbolSpand * config.symbolSize);
-                index++;
-
-                console.log(index + "    " + doubleSymbol + "   " + k);
                 
-            }while (doubleSymbol + startIndex !== indexMax && index !== bitsPerBlock && k < config.errorChance);
-            
-            if ( (doubleSymbol + startIndex) >= config.symbolSize ) {
-                k++;
-            }
+            };
+
+            buffer += block;
         };
-
-        buffer += block;
-    };
-
-    wl.write(buffer + "\n");
-});
+        console.log("Error for current line ends here");
+        wl.write(buffer + "\n");
+    });
 
 
-// on close print summary
-rl.on('close', () => {
-    // Add the last bit of read line we couldn't process
-    wl.write(safeKeep);
-    console.log("Error injection finished\n");
-});
-*/
+    // on close print summary
+    rl.on('close', () => {
+        // Add the last bit of read line we couldn't process
+        wl.write(safeKeep);
+        console.log("Error injection finished\n");
+    });
+}
 
 
 
-// 1 continius, singular burst error, 
-rl.on('line', line => {
-    let buffer = "";
-    /**
-     * makes lines of @bitPerBlock size no matter the latout of the file
-     * if the string gets a sutable lenth inject error
-     *   else go to next line
-    */
-    line = safeKeep + line.slice(0, line.length);
-    safeKeep = line.slice(Math.floor(line.length / bitsPerBlock) * bitsPerBlock, line.length);
-    line = line.slice(0, Math.floor(line.length / bitsPerBlock) * bitsPerBlock);
-    if ( (line.length + safeKeep.length) < bitsPerBlock ) {
-        return;
-    }
+// 1 continuous, singular burst error, 
+if (errorstyle === "single") {
+    rl.on('line', line => {
+        let buffer = "";
+        /**
+         * make lines with @bitPerBlock size, no matter the latout of the file
+         * if the string gets a sutable lenth, injects errors
+         *   else go to next line
+        */
+        line = safeKeep + line.slice(0, line.length);
+        safeKeep = line.slice(Math.floor(line.length / bitsPerBlock) * bitsPerBlock, line.length);
+        line = line.slice(0, Math.floor(line.length / bitsPerBlock) * bitsPerBlock);
+        // skip a line if it is too short
+        if ( (line.length + safeKeep.length) < bitsPerBlock ) {
+            return;
+        }
 
-    console.log("Error are being made on a line:");
+        console.log("Error for current line starts here");
 
-    // split the line into strings of length symbolsize whin if possible
-    for (let i = 0; i < line.length; i += bitsPerBlock) {
-        let block = line.slice(i, i + bitsPerBlock);
+        // splits the read line into strings of symbolsize length
+        for (let i = 0; i < line.length; i += bitsPerBlock) {
+            let block = line.slice(i, i + bitsPerBlock);
 
-        const maxSymbolSpand = config.errorChance;                      // Maximum stand of the burst error
-        let k = 0;
-        let flips = 0;
-        
-        let indexMax = (maxSymbolSpand * config.symbolSize);            // Maximum reach of the burst error
-        let index = randomNumber(0,bitsPerBlock);                       // Starting point
-        const startIndex = ( index % config.symbolSize );               // Starting point relative to symbols
-        
-        
-        const chance = 3;  // Used to gereate number from 0 to <---
-        do{
-            if (1 === ( randomNumber(0, chance) ) ) {    // !!!!!!!!! Er ikke 100% tilfældigt da det største tal skal gå op i chance !!!!!!!!!!
-                try {
-                    block = block.substr(0, index) +
-                    flip(block[index]) +
-                    block.substr(index + 1);
-                } catch (err) {
-                    console.log("error occured");
-                    break;
+            const maxSymbolSpand = config.errorChance;                      // Maximum stand of the burst error
+            let k = 0;                                                      // Tracks amount of symbols tampered
+            let flips = 0;                                                  // Amount of bits looked at
+            
+            let indexMax = (maxSymbolSpand * config.symbolSize);            // Maximum reach of the burst error
+            let index = randomNumber(0,bitsPerBlock);                       // Starting point
+            const startIndex = ( index % config.symbolSize );               // Starting point relative to symbols
+            
+            
+            const chance = 3;  // Used to gereate number from 0 to and with <---
+            
+            // Roll if the current index-bit shall be fliped
+            do{
+                if (1 === ( randomNumber(0, chance) ) ) {
+                    try {
+                        block = block.substr(0, index) +
+                        flip(block[index]) +
+                        block.substr(index + 1);
+                    } catch (err) {
+                        console.log(`error occured at index ${index}`);
+                        break;
+                    }
                 }
                 flips++;
-            }
-            else {          // Insure that the skipped Index is counted
-                flips++;
-            }
-            index++;
+                index++;
+                
+                // Tracks amount of symbols effected 
+                if ( ( (flips + startIndex) % config.symbolSize ) === 0) {
+                    k++;
+                }
+                // Logs the current state of everything
+                console.log(startIndex + "  " + i + "+" + index + "    " + flips + "   " + k);
+            }while ( (flips + startIndex) !== indexMax && index !== bitsPerBlock && k < maxSymbolSpand);
             
-            if ( ( (flips + startIndex) % config.symbolSize ) === 0) {
-                k++;
-            }
-            console.log(startIndex + "  " + i + "+" + index + "    " + flips + "   " + k);
-        }while ( (flips + startIndex) !== indexMax && index !== bitsPerBlock && k < maxSymbolSpand);
-        
-        buffer += block;
-    };
-    console.log("Error for current line ends here");
-    wl.write(buffer + "\n");
-});
+            // Save the affected block
+            buffer += block;
+        };
+        console.log("Error for current line ends here");
+        wl.write(buffer + "\n");
+    });
 
 
-// on close print summary
-rl.on('close', () => {
-    // Add the last bit of read line we couldn't process
-    wl.write(safeKeep);
-    console.log("Error injection finished\n");
-});
-
+    // on close print summary
+    rl.on('close', () => {
+        // Add the last bit of read line that couldn't be processed
+        wl.write(safeKeep);
+        console.log("Error injection finished\n");
+    });
+}
 /**
- * Returns the string with a bit flipped
- * @param {string, number} a bit string and an index to be flipped
+ * Returns string bit flipped
+ * @param {string} a bit to be flipped
  * @return {string}
  */
 function flip(str) {
@@ -195,8 +200,11 @@ function flip(str) {
     return str;
 }
 
+// Getting a random integer between two values, inclusive
+// if max = 2 and min = 0 
+// possible numbers: 0,1,2
 function randomNumber(min, max) {
-    return (Math.trunc(Math.random() * (max - min) + min));
+    return (Math.floor(Math.random() * (max - min + 1) + min));
 }
 
 
