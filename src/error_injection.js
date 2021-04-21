@@ -7,7 +7,7 @@ let config = data.config;
 const bitsPerBlock = config.symbolSize * config.codeSize;
 
 // read and write streams
-const wl = fs.createWriteStream(projectRoot + "/" + config.errorFile, {encoding: "utf8"});
+const wl = fs.createWriteStream(projectRoot + "/" + config.errorFile, { encoding: "utf8" });
 const rl = readline.createInterface({
     input: fs.createReadStream(projectRoot + "/" + config.encodedFile)
 });
@@ -26,11 +26,11 @@ rl.on('line', line => {
 
         // inject errors
         for (let j = 0; j < config.errorChance; j++) {
-            let blockNum = Math.trunc( config.codeSize * Math.random() ),
+            let blockNum = Math.trunc(config.codeSize * Math.random()),
                 index = config.symbolSize * blockNum;
             block = block.substr(0, index) +
-                    randomSymbol() +
-                    block.substr(index + config.symbolSize);
+                randomSymbol() +
+                block.substr(index + config.symbolSize);
         };
 
         buffer += block;
@@ -63,10 +63,24 @@ function flip(str, bit) {
 }
 
 function randomSymbol() {
-    let num = Math.trunc( (2 ** config.symbolSize - 1) * Math.random() ),
+    let num = Math.trunc((2 ** config.symbolSize - 1) * Math.random()),
         numStr = num.toString(2);
 
-    while(numStr.length < config.symbolSize) numStr = "0" + numStr;
+    while (numStr.length < config.symbolSize) numStr = "0" + numStr;
 
     return numStr;
+}
+
+/**
+ * Injects random bit errors into binaryStr based on the set Bit-Error-Rate(BER) in config.json
+ * @param {string} binaryStr to inject and simulate random bit errors on
+ * @returns {string} binaryStr after simulation and injection of random bit errors
+ */
+function bitErrorInjection(binaryStr) {
+    for (let i = 0; i < binaryStr.length; i++) {
+        if (Math.random() * 100 < config.bitErrorRate) {
+            binaryStr = flip(binaryStr, i);
+        }
+    }
+    return binaryStr;
 }

@@ -5,6 +5,7 @@
     "mode": "encode",
     "encoding": 8,
     "errorChance": 2,
+    "bitErrorRate": 1,
     "inputFile": "data/input.txt",
     "encodedFile": "data/encoded.txt",
     "errorFile": "data/error.txt",
