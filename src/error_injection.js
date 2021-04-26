@@ -24,6 +24,7 @@ console.log(`Reading lines from: ${config.encodedFile}\nWriting error injected l
  * From random starting point to end of current symbol, or up to and with maxSymbolSpand
  */
 if (errorStyle === "multi") {
+    console.log("\nInserting multible burst errors");
     rl.on('line', line => {
         let buffer = "";
 
@@ -47,18 +48,18 @@ if (errorStyle === "multi") {
             let block = line.slice(i, i + bitsPerBlock);
 
 
-            const maxSymbolSpand = 2;                                   // Kunne gøres så bruger skal skrive et input
+            const maxSymbolSpand = 1;                                   // Maximum amount of symbols allowed to traverse 
             const chance = 3;                                           // Used to gereate number from 0 to and with <---
             let indexMax = (maxSymbolSpand * config.symbolSize);        // Maximum reach of the burst error
             
             // if the errorChance is an un-even number:
-            // Insure that we don't create more errors, than can be handled, by makeing 1 burst that is only 1 config.symbolSize
+            // Insure that we don't create more errors, than can be handled, by makeing 1 burst that is only 1 config.symbolSize size
             if ( (config.errorChance % 2) === 1){
                 indexMax = config.symbolSize;
             };
 
             // *possible* to create multible burst errors
-            for (let k = 0; k < config.errorChance; k++) {
+            for (let k = 0; k < config.errorChance;) {
                 let index = randomNumber(0, bitsPerBlock-1); 
                 console.log(i + " " + index);
                 
@@ -81,9 +82,13 @@ if (errorStyle === "multi") {
                     index++;
                     // insure we revert back, so the bust error can stretch maxSymbolSpand Symbols
                     
-
+                    // every config.symbolSize will increment k
                     if ( ( (doubleSymbol + startIndex) % config.symbolSize ) === 0) {
                         k++;
+                    }
+                    // insure 'end of line' increments k
+                    else if (index === bitsPerBlock-1) {
+                        k++
                     }
 
                     // Logs the current state of everything
@@ -113,6 +118,7 @@ if (errorStyle === "multi") {
 
 // 1 continuous, singular burst error, 
 if (errorStyle === "single") {
+    console.log("\nInserting a singular burst error");
     rl.on('line', line => {
         let buffer = "";
         /**
@@ -134,7 +140,7 @@ if (errorStyle === "single") {
         for (let i = 0; i < line.length; i += bitsPerBlock) {
             let block = line.slice(i, i + bitsPerBlock);
 
-            const maxSymbolSpand = config.errorChance;                      // Maximum stand of the burst error
+            const maxSymbolSpand = config.errorChance;                      // Maximum spand of the burst error
             let k = 0;                                                      // Tracks amount of symbols tampered
             let flips = 0;                                                  // Amount of bits looked at
             
@@ -164,8 +170,9 @@ if (errorStyle === "single") {
                 if ( ( (flips + startIndex) % config.symbolSize ) === 0) {
                     k++;
                 }
+
                 // Logs the current state of everything
-                console.log(startIndex + "  " + i + "+" + index + "    " + flips + "   " + k);
+                console.log(index + "    " + startIndex + "+" + flips + "    " + k);
             }while ( (flips + startIndex) !== indexMax && index !== bitsPerBlock && k < maxSymbolSpand);
             
             // Save the affected block
