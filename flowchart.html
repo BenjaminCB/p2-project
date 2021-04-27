@@ -109,5 +109,26 @@
         if1 --True--> do2 --> do3 --> do4 --> if1
         if1 --False--> stop
     </div>
+
+    <h2>Generate Tables</h2>
+    <div class="mermaid">
+        graph TD
+        start(["generateTables()"])
+        do1["Intialize size, generator, toIndex[] and toPoly[]"]
+        do2["toIndex[1] = 0, toPoly[0] = 1"]
+        do3["current = 1, highestBiyt, i = 1"]
+        if1{"i < size"}
+        if1_true["current <<= 1"]
+        if2{"current has highestBit"}
+        if2_true["current = current xor generator"]
+        do4["toIndex[current] = 1 % (size - 1) <br/> toPoly[i] = current, <br/> i++"]
+        stop(["return [toIndex, toPoly]"])
+
+        start --> do1 --> do2 --> do3 --> if1
+        if1 --True--> if1_true --> if2
+        if1 --False--> stop
+        if2 --True--> if2_true --> do4
+        if2 --False--> do4 --> if1
+    </div>
   </body>
 </html>
