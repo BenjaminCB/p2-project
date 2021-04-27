@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+
+    <h2>Division of polynomials</h2>
+    <div class="mermaid">
+        graph TD
+        start(["division(dividend, divisor)"])
+        init["Initialize dividendDegree, divisorDegree, offset, lastRound = false"]
+        base{"offset === 0"}
+        base_true["lastRound = true"]
+        calc1["value = highest term in dividend divided by highest term in divisor"]
+        calc2["factor = divisor times x to the power of offset"]
+        calc3["map every element in factor to element galois meltiply value"]
+        calc4["sum = divided + factor"]
+        stop(["return lastRound ? sum : division(sum, divisor)"])
+
+        start --> init
+        init --> base
+        base --True--> base_true
+        base --False--> calc1
+        base_true --> calc1
+        calc1 --> calc2
+        calc2 --> calc3
+        calc3 --> calc4
+        calc4 --> stop
+
+
+    </div>
+
+  </body>
+</html>
