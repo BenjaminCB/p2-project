@@ -6,7 +6,6 @@ import * as data from "../util/data_processing.js";
 const projectRoot = process.cwd();
 let config = data.config;
 const bitsPerBlock = config.symbolSize * config.codeSize;
-let safeKeep = "";
 
 // read and write streams
 const wl = fs.createWriteStream(projectRoot + "/" + config.errorFile, { encoding: "utf8" });
@@ -19,33 +18,17 @@ console.log(`Injecting errors in lines from: ${config.encodedFile}\nWriting erro
 
 
 /**
- * *possible* to create multible burst errors across @maxSymbolSpand symbols === config.symbolSize
- * From random starting point to end of current symbol, or up to and with maxSymbolSpand
+ * *possible* to create multible burst errors across @config.burstErrorSymbolSpan symbols === config.symbolSize
+ * From random starting point to end of current symbol, or up to and with config.burstErrorSymbolSpan
  */
 rl.on('line', line => {
     line = bitErrorInjection(line);
     let buffer = "";
 
-    /**
-     * make lines with @bitPerBlock size, no matter the latout of the file
-     * if the string gets a sutable lenth, injects errors
-     *   else go to next line
-     */
-    line = safeKeep + line.slice(0, line.length);
-    safeKeep = line.slice(Math.floor(line.length / bitsPerBlock) * bitsPerBlock, line.length);
-    line = line.slice(0, Math.floor(line.length / bitsPerBlock) * bitsPerBlock);
-    // skip a line if it is too short
-    if ((line.length + safeKeep.length) < bitsPerBlock) {
-        return;
-    }
-
     for (let i = 0; i < line.length; i += bitsPerBlock) {
         let block = line.slice(i, i + bitsPerBlock);
 
-
-        const maxSymbolSpand = 1;                                   // Maximum amount of symbols allowed to traverse 
-        const chance = 3;                                           // Used to gereate number from 0 to and with <---
-        let indexMax = (maxSymbolSpand * config.symbolSize);        // Maximum reach of the burst error
+        let indexMax = (config.burstErrorSymbolSpan * config.symbolSize);        // Maximum reach of the burst error
 
         // if the errorChance is an un-even number:
         // Insure that we don't create more errors, than can be handled, by makeing 1 burst that is only 1 config.symbolSize size
@@ -62,7 +45,7 @@ rl.on('line', line => {
 
             // Roll if the current index-bit shall be fliped
             do {
-                if (1 === (randomNumber(0, chance))) {
+                if (1 === (randomNumber(0, config.burstErrorFlipChance))) {
                     try {
                         block = block.substr(0, index) +
                             flip(block[index]) +
@@ -74,7 +57,7 @@ rl.on('line', line => {
                 }
                 doubleSymbol++;
                 index++;
-                // insure we revert back, so the bust error can stretch maxSymbolSpand Symbols
+                // insure we revert back, so the bust error can stretch config.burstErrorSymbolSpan Symbols
 
                 // every config.symbolSize will increment k
                 if (((doubleSymbol + startIndex) % config.symbolSize) === 0) {
@@ -86,7 +69,7 @@ rl.on('line', line => {
                 }
             } while (doubleSymbol + startIndex !== indexMax && index !== bitsPerBlock - 1 && k < config.errorChance);
 
-            indexMax = (maxSymbolSpand * config.symbolSize);
+            indexMax = (config.burstErrorSymbolSpan * config.symbolSize);
 
         };
 
@@ -98,8 +81,6 @@ rl.on('line', line => {
 
 // on close print summary
 rl.on('close', () => {
-    // Add the last bit of read line we couldn't process
-    wl.write(safeKeep);
     console.log("Error injection finished\n");
 });
 
