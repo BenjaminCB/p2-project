@@ -19,5 +19,9 @@
     "homepage": "https://github.com/BenjaminCB/p2-project#readme",
     "devDependencies": {
         "ava": "^3.15.0"
+    },
+    "dependencies": {
+        "shelljs": "^0.8.4",
+        "websocket": "^1.0.34"
     }
 }
