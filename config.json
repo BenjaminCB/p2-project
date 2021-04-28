@@ -9,5 +9,6 @@
     "inputFile": "data/input.txt",
     "encodedFile": "data/encoded.txt",
     "errorFile": "data/error.txt",
-    "decodedFile": "data/decoded.txt"
+    "decodedFile": "data/decoded.txt",
+    "infomationFile": "data/config.txt"
 }

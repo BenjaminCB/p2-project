@@ -70,5 +70,9 @@ wsServer.on('request', (req) => {
         read = fs.readFileSync(config.decodedFile);
         connection.sendUTF(event + read);
 
+        // 
+        event = "info=";
+        read = fs.readFileSync("./data/config.txt").toString('utf-8');
+        connection.sendUTF(event + read);
     });
 });
