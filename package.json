@@ -22,7 +22,6 @@
     },
     "dependencies": {
         "shelljs": "^0.8.4",
-        "slash": "^3.0.0",
         "websocket": "^1.0.34"
     }
 }
