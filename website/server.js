@@ -3,6 +3,7 @@ import websocket from "websocket";
 import fs from "fs";
 import url from "url";
 import shelljs from "shelljs";
+import slash from "slash";
 import * as data from "../util/data_processing.js";
 
 const cwd = process.cwd();
@@ -53,7 +54,7 @@ wsServer.on('request', (req) => {
         fs.writeFileSync(config.inputFile, msg.utf8Data);
 
         // let the other programs handle encoding decoding etc...
-        shelljs.exec(cwd + "/run.sh");
+        shelljs.exec(slash(cwd) + "/run.sh");
 
         // read and send the encoding message
         let event = "encode=";
