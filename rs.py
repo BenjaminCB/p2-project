@@ -1,17 +1,19 @@
 import time
 import random
+import sys
 import reedsolo as rs
 
 # Reed Solomon values
 m = 8
-n = 255
-t = 8
+n = 15
+t = 2
 k = n - 2 * t
 runs = 25
 
 def main():
     # Reed message from file and encode
     msg = open('data/input.txt', 'r').read().encode()
+    msgs = split_str(msg, n - 2 * t)
 
     # Open timer file in append mode
     encode_time = open('data/encode_time_python.csv', 'a')
@@ -25,23 +27,41 @@ def main():
 
     for i in range(runs):
         # Encode msg
+        msgeccs = []
         t1 = time.perf_counter()
-        msgecc = rs.rs_encode_msg(msg, 2 * t, gen=gen[2 * t])
+        for m in msgs:
+            msgeccs.append(rs.rs_encode_msg(m, 2 * t, gen=gen[2 * t]))
         t2 = time.perf_counter()
         encode_time.write(str(t2 - t1) + '\n')
 
         # Error
-        error_inject(msgecc)
+        for msgecc in msgeccs:
+            error_inject(msgecc)
 
         # Decode
+        corrections = []
         t1 = time.perf_counter()
-        rmsg, recc, err_pos = rs.rs_correct_msg(msgecc, 2 * t)
+        for msgecc in msgeccs:
+            corrections.append(rs.rs_correct_msg(msgecc, 2 * t))
         t2 = time.perf_counter()
         decode_time.write(str(t2 - t1) + '\n')
 
+        rmsg = b''
+        for c in corrections:
+            rmsg += c[0]
+
         # Check result
-        print(msg.decode())
-        print(rmsg.decode())
+        if (msg.decode() == rmsg.decode()):
+            print("True")
+        else:
+            print("False")
+
+def split_str(s, n):
+    arr = []
+    while len(s) > 0:
+        arr.append(s[:n])
+        s = s[n:]
+    return arr
 
 def error_inject(s):
     for i in range(t):
