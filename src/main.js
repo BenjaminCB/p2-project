@@ -5,6 +5,7 @@ import * as encode from "./encode.js";
 import * as decode from "./decode.js";
 import * as arith from "../util/arithmetic.js";
 import * as data from "../util/data_processing.js";
+import { performance } from "perf_hooks";
 export { toIndex, toPoly, code, projectRoot };
 
 const projectRoot = process.cwd();
@@ -25,6 +26,7 @@ if (config.mode === "encode") {
     const rl = readline.createInterface({
         input: fs.createReadStream(projectRoot + "/" + config.inputFile)
     });
+    const et = fs.createWriteStream(projectRoot + "/data/encode_time_js.csv", {encoding: "utf8" });
 
     // Log what we are going to do
     console.log(`Encoding lines in file: ${config.inputFile}\nWriting encoded lines to file: ${config.encodedFile}`);
@@ -33,23 +35,26 @@ if (config.mode === "encode") {
     rl.on('line', line => {
         // summary values
         lines++;
-        const time = Date.now();
 
         //convert read text-string to polynomials
         const msgs = data.strToPolys(line);
 
         //actual encoding
         let encodedMsgs = [];
-        for (let i = 0; i < msgs.length; i++) {
-            encodedMsgs[i] = encode.encodeBlock(msgs[i]);
+        for (let i = 0; i < 25; i++) {
+            const time = performance.now();
+            for (let i = 0; i < msgs.length; i++) {
+                encodedMsgs[i] = encode.encodeBlock(msgs[i]);
+            }
+
+            et.write(performance.now() - time + "\n");
+            // for all the message polynomials encode every coefficient to a binary string
+            // Then join coefficients withouth a space then join polynomials with a space
+
+            // log the time for encoding
+            totalTime += Date.now() - time;
         }
-
-        // for all the message polynomials encode every coefficient to a binary string
-        // Then join coefficients withouth a space then join polynomials with a space
         const binaryStr = data.polysToBinaryStr(encodedMsgs);
-
-        // log the time for encoding
-        totalTime += Date.now() - time;
 
         // write encoded line
         wl.write(binaryStr + "\n");
@@ -72,6 +77,7 @@ if (config.mode === "encode") {
     const rl = readline.createInterface({
         input: fs.createReadStream(projectRoot + "/" + config.errorFile)
     });
+    const dt = fs.createWriteStream(projectRoot + "/data/decode_time_js.csv", {encoding: "utf8" });
 
     console.log(`Decoding lines in file: ${config.errorFile}\nWriting decoded lines to file: ${config.decodedFile}`);
 
@@ -79,25 +85,32 @@ if (config.mode === "encode") {
     rl.on('line', line => {
         // summary values
         lines++;
-        const time = Date.now();
 
         //convert read encoded binary string to polynomials
-        let received = data.binaryToPolys(line, config.codeSize),
-            decoded = [];
+        let received = data.binaryToPolys(line, config.codeSize);
+        let decoded = [];
 
         //actual decoding
         for (let i = 0; i < received.length; i++) {
             decoded[i] = decode.decodeBlock(received[i]);
         }
-
-        // convert decoded messages to a text-string
         let str = data.polysToStr(decoded);
-
-        // log the time for encoding
-        totalTime += Date.now() - time;
-
         // write encoded line
         wl.write(str + "\n");
+
+        for (let i = 0; i < 25; i++) {
+            let decoded1 = [];
+            const time = performance.now();
+            for (let i = 0; i < received.length; i++) {
+                decoded1[i] = decode.decodeBlock(received[i]);
+            }
+            dt.write(performance.now() - time + "\n");
+
+            // convert decoded messages to a text-string
+
+            // log the time for encoding
+            totalTime += Date.now() - time;
+        }
     });
 
     // on close print summary

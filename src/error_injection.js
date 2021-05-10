@@ -22,7 +22,7 @@ console.log(`Injecting errors in lines from: ${config.encodedFile}\nWriting erro
  * From random starting point to end of current symbol, or up to and with config.burstErrorSymbolSpan
  */
 rl.on('line', line => {
-    // line = bitErrorInjection(line);
+    line = bitErrorInjection(line);
     let buffer = "";
 
     for (let i = 0; i < line.length; i += bitsPerBlock) {
