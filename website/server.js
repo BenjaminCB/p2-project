@@ -53,7 +53,7 @@ wsServer.on('request', (req) => {
         fs.writeFileSync(config.inputFile, msg.utf8Data);
 
         // let the other programs handle encoding decoding etc...
-        shelljs.exec(cwd + "/run.sh");
+        shelljs.exec('"' + cwd + "/run.sh" + '"');
 
         // read and send the encoding message
         let event = "encode=";
