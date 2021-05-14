@@ -72,7 +72,7 @@ wsServer.on('request', (req) => {
 
         // read and send the program information
         event = "info=";
-        read = fs.readFileSync("./config.json").toString('utf-8') + "\n\n Indsæt timeSpendtEncoding & \n timeSpendtDecoding her:";
+        read = fs.readFileSync("./config.json").toString('utf-8');
 /*         + "\n" + timeSpendtEncoding + "ms \n" + timeSpendtDecoding + "ms";
            + fs.readFileSync(config.decodedFile);*/
         connection.sendUTF(event + read);
