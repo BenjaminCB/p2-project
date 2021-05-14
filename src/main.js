@@ -5,6 +5,7 @@ import * as encode from "./encode.js";
 import * as decode from "./decode.js";
 import * as arith from "../util/arithmetic.js";
 import * as data from "../util/data_processing.js";
+import { performance } from 'perf_hooks'
 export { toIndex, toPoly, code, projectRoot };
 
 const projectRoot = process.cwd();
@@ -17,7 +18,7 @@ let code = setup.codeGenerator();
 
 if (config.mode === "encode") {
     // summary values
-    let totalTime = 0;
+    var timeSpendtEncoding = 0;
     let lines = 0;
 
     // read and write streams
@@ -33,7 +34,7 @@ if (config.mode === "encode") {
     rl.on('line', line => {
         // summary values
         lines++;
-        const time = Date.now();
+        var t0 = performance.now();
 
         //convert read text-string to polynomials
         const msgs = data.strToPolys(line);
@@ -49,7 +50,8 @@ if (config.mode === "encode") {
         const binaryStr = data.polysToBinaryStr(encodedMsgs);
 
         // log the time for encoding
-        totalTime += Date.now() - time;
+        var t1 = performance.now();
+        timeSpendtEncoding = t1-t0;
 
         // write encoded line
         wl.write(binaryStr + "\n");
@@ -58,13 +60,13 @@ if (config.mode === "encode") {
     // on close print summary
     rl.on('close', () => {
         console.log("Finished encoding\n",
-            "Total time: " + totalTime + "\n",
+            "Total time: " + timeSpendtEncoding + " ms \n",
             "Number of lines: " + lines + "\n",
-            "Avg time per line: " + totalTime / lines);
+            "Avg time per line: " + timeSpendtEncoding / lines + " ms");
     });
 } else if (config.mode === "decode") {
     // summary values
-    let totalTime = 0;
+    var timeSpendtDecoding = 0;
     let lines = 0;
 
     // read and write streams
@@ -79,7 +81,7 @@ if (config.mode === "encode") {
     rl.on('line', line => {
         // summary values
         lines++;
-        const time = Date.now();
+        var t0 = performance.now();
 
         //convert read encoded binary string to polynomials
         let received = data.binaryToPolys(line, config.codeSize),
@@ -93,20 +95,23 @@ if (config.mode === "encode") {
         // convert decoded messages to a text-string
         let str = data.polysToStr(decoded);
 
-        // log the time for encoding
-        totalTime += Date.now() - time;
 
-        // write encoded line
+        // log the time for decoding
+        var t1 = performance.now();
+        timeSpendtDecoding = t1-t0;
+
+        // write decode line
         wl.write(str + "\n");
     });
 
     // on close print summary
     rl.on('close', () => {
         console.log("Finished decoding\n",
-            "Total time: " + totalTime + "\n",
+            "Total time: " + timeSpendtDecoding + " ms \n",
             "Number of lines: " + lines + "\n",
-            "Avg time per line: " + totalTime / lines);
+            "Avg time per line: " + timeSpendtDecoding / lines + " ms");
     });
+    
 } else {
     throw Error("Invalid mode of operation");
 }

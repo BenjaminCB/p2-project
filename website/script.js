@@ -4,6 +4,7 @@ let ws = new WebSocket("ws://localhost:8080/");
 let encode = document.getElementById("EC");
 let error = document.getElementById("ERR");
 let decode = document.getElementById("DC");
+let info = document.getElementById("INFO");
 
 ws.addEventListener("open",() => {
     console.log("Connection open");
@@ -46,6 +47,8 @@ ws.addEventListener("message", (received) => {
             error.innerText = bin2hex(data); break;
         case "decode":
             decode.innerText = data; break;
+        case "info":
+            info.innerText = data; break;
         default:
             console.log("An unknown event was emmitted by the server");
     }
