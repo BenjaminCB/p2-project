@@ -4,7 +4,9 @@
     "symbolSize": 4,
     "mode": "encode",
     "encoding": 8,
-    "errorChance": 2,
+    "burstErrorAmount": 2,
+    "burstErrorSymbolSpan": 1,
+    "burstErrorFlipChance": 3,
     "bitErrorRate": 1,
     "inputFile": "data/input.txt",
     "encodedFile": "data/encoded.txt",
@@ -12,3 +14,4 @@
     "decodedFile": "data/decoded.txt",
     "infomationFile": "data/config.txt"
 }
+
