@@ -18,7 +18,7 @@ let code = setup.codeGenerator();
 
 if (config.mode === "encode") {
     // summary values
-    var timeSpendtEncoding = 0;
+    let timeSpentEncoding = 0;
     let lines = 0;
 
     // read and write streams
@@ -34,10 +34,13 @@ if (config.mode === "encode") {
     rl.on('line', line => {
         // summary values
         lines++;
-        var t0 = performance.now();
+
 
         //convert read text-string to polynomials
         const msgs = data.strToPolys(line);
+
+        //pre encoding time
+        let t0 = performance.now();
 
         //actual encoding
         let encodedMsgs = [];
@@ -45,13 +48,14 @@ if (config.mode === "encode") {
             encodedMsgs[i] = encode.encodeBlock(msgs[i]);
         }
 
-        // for all the message polynomials encode every coefficient to a binary string
-        // Then join coefficients withouth a space then join polynomials with a space
-        const binaryStr = data.polysToBinaryStr(encodedMsgs);
+        //post encoding time
+        let t1 = performance.now();
 
         // log the time for encoding
-        var t1 = performance.now();
-        timeSpendtEncoding = t1-t0;
+        timeSpentEncoding += t1 - t0;
+
+        //convert polynomials to encoded binary string
+        const binaryStr = data.polysToBinaryStr(encodedMsgs);
 
         // write encoded line
         wl.write(binaryStr + "\n");
@@ -66,7 +70,7 @@ if (config.mode === "encode") {
     });
 } else if (config.mode === "decode") {
     // summary values
-    var timeSpendtDecoding = 0;
+    let timeSpentDecoding = 0;
     let lines = 0;
 
     // read and write streams
@@ -81,24 +85,28 @@ if (config.mode === "encode") {
     rl.on('line', line => {
         // summary values
         lines++;
-        var t0 = performance.now();
+
 
         //convert read encoded binary string to polynomials
         let received = data.binaryToPolys(line, config.codeSize),
             decoded = [];
+
+        //pre decoding time
+        let t0 = performance.now();
 
         //actual decoding
         for (let i = 0; i < received.length; i++) {
             decoded[i] = decode.decodeBlock(received[i]);
         }
 
-        // convert decoded messages to a text-string
-        let str = data.polysToStr(decoded);
-
+        //post decoding time
+        let t1 = performance.now();
 
         // log the time for decoding
-        var t1 = performance.now();
-        timeSpendtDecoding = t1-t0;
+        timeSpentDecoding += t1 - t0;
+
+        // convert decoded messages to a text-string
+        let str = data.polysToStr(decoded);
 
         // write decode line
         wl.write(str + "\n");
@@ -111,7 +119,7 @@ if (config.mode === "encode") {
             "Number of lines: " + lines + "\n",
             "Avg time per line: " + timeSpendtDecoding / lines + " ms");
     });
-    
+
 } else {
     throw Error("Invalid mode of operation");
 }
