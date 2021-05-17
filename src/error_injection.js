@@ -115,7 +115,7 @@ function randomNumber(min, max) {
  */
 function bitErrorInjection(binaryStr) {
     for (let i = 0; i < binaryStr.length; i++) {
-        if (Math.random() * 100 < config.bitErrorRate) {
+        if (randomNumber(0, 100) <= config.bitErrorRate) {
             binaryStr = binaryStr.slice(0, i) + flip(binaryStr[i]) + binaryStr.slice(i + 1);
         }
     }
