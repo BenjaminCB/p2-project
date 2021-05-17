@@ -64,9 +64,9 @@ if (config.mode === "encode") {
     // on close print summary
     rl.on('close', () => {
         console.log("Finished encoding\n",
-            "Total time: " + timeSpendtEncoding + " ms \n",
+            "Total time: " + timeSpentEncoding + " ms \n",
             "Number of lines: " + lines + "\n",
-            "Avg time per line: " + timeSpendtEncoding / lines + " ms");
+            "Avg time per line: " + timeSpentEncoding / lines + " ms");
     });
 } else if (config.mode === "decode") {
     // summary values
@@ -115,9 +115,9 @@ if (config.mode === "encode") {
     // on close print summary
     rl.on('close', () => {
         console.log("Finished decoding\n",
-            "Total time: " + timeSpendtDecoding + " ms \n",
+            "Total time: " + timeSpentDecoding + " ms \n",
             "Number of lines: " + lines + "\n",
-            "Avg time per line: " + timeSpendtDecoding / lines + " ms");
+            "Avg time per line: " + timeSpentDecoding / lines + " ms");
     });
 
 } else {
