@@ -30,14 +30,8 @@ rl.on('line', line => {
 
         let indexMax = (config.burstErrorSymbolSpan * config.symbolSize);        // Maximum reach of the burst error
 
-        // if the errorChance is an un-even number:
-        // Insure that we don't create more errors, than can be handled, by makeing 1 burst that is only 1 config.symbolSize size
-        if ((config.errorChance % 2) === 1) {
-            indexMax = config.symbolSize;
-        };
-
         // *possible* to create multible burst errors
-        for (let k = 0; k < config.errorChance;) {
+        for (let k = 0; k < config.burstErrorAmount;) {
             let index = randomNumber(0, bitsPerBlock - 1);
 
             let doubleSymbol = 0;                                   // Used to count the amount of index'es that have been looked, and are possible to have changed
@@ -45,7 +39,7 @@ rl.on('line', line => {
 
             // Roll if the current index-bit shall be fliped
             do {
-                if (1 === (randomNumber(0, config.burstErrorFlipChance))) {
+                if (1 === (randomNumber(1, config.burstErrorFlipChance))) {
                     try {
                         block = block.substr(0, index) +
                             flip(block[index]) +
@@ -67,10 +61,7 @@ rl.on('line', line => {
                 else if (index === bitsPerBlock - 1) {
                     k++
                 }
-            } while (doubleSymbol + startIndex !== indexMax && index !== bitsPerBlock - 1 && k < config.errorChance);
-
-            indexMax = (config.burstErrorSymbolSpan * config.symbolSize);
-
+            } while (doubleSymbol + startIndex !== indexMax && index !== bitsPerBlock - 1 && k < config.burstErrorAmount);
         };
 
         buffer += block;
