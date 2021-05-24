@@ -1,40 +1,29 @@
 # p2-project
-Collection of code files for 2. semester p2-project, spanding from January to May 2021
+Collection of code files for 2. semester p2-project, spanding from January to May 2021.
 
-# Program
+A documentation of the program can be found on AAU's website for published works.
+
+# Useing the program
+To use the implementation; running **'./run.sh'** from the p2-project folder will run Reed-solomon on the current tekst in input.txt. Or (preferably) running **'node website/server.js'** from the p2-project folder, and going to [localhost:8080](https://localhost:8080) on (preferably) chrome to have an easier overview of input, incodeing, decodeing, output and config settings.
+
+# Configurations
 The program is a local simulation of the use of Reed-solomon code, used for error-detection and -correction.
 The program is configurable through the config.JSON file:
 
-1. From tekst to binary: 
-
-      @@
-
-2. Input is a .txt file written in UTF-8. (Lige nu er det binært-data og ikke 'karakter-tekst')
-
-3. Encodeing-run:
-       
-      Creates "encoded.txt" which is the Reed-solomon incoded file, based on the "config.JSON" and the "input.txt"
-
-4. Error-injection:
-
-      Creates "error.txt", this is "encoded.txt" but with random bitflips, to a specified amount of bits pr. RS(x,y)
-
-5. Decodeing-run:
-
-      Creates "decoded.txt" with is "encoded.txt" decodes. 
-      This file would be identical to "input.txt", if the limits of the program have been complied with.
-      Also creates "diff.txt", that compares the diffrences between "decoded.txt" and "input.txt".
-
-6. To text from binary: @@
-
-# Info
-Polynomials are represented with arrays, probably of a fixed length and typed
-
-[13, 4, 5, 2]
-
-Would be 13 + 4x + 5x^2 + 2x^3
-
-Things from the config file are global constants
+    "codeSize": 15,                             // "messageSize" + "symbolSize"     (n)
+    "messageSize": 11,                          // The message to be sendt          (k)
+    "symbolSize": 4,                            // Size of each symbol              (m = 2t)
+    "mode": "encode",                           // Used in \.run.sh to determin the current mode to execute
+    "encoding": 8,                              // UTF-8
+    "burstErrorAmount": 2,                      // Total amount of errors to insert
+    "burstErrorSymbolSpan": 1,                  // Amount of symbols burst errors may spand over
+    "burstErrorFlipChance": 3,                  // 1/3 chance to flip a bit
+    "bitErrorRate": 1,                          // Alternative (risky) flip of every bit
+    "inputFile": "data/input.txt",              |
+    "encodedFile": "data/encoded.txt",          |
+    "errorFile": "data/error.txt",              // Files to save to, and their location
+    "decodedFile": "data/decoded.txt",          |
+    "infomationFile": "data/config.txt"         |
 
 # File structure
 p2-project
@@ -44,18 +33,24 @@ p2-project
     - error.txt
     - decoded.txt
     - diff.txt
-    - output.txt
 - src/
     - main.js
-    - setup/
-    - encoding/
+    - setup.js
+    - encoding.js
     - error_injection.js
-    - decoding/
+    - decoding.js
 - util/
     - arithmetic.js
     - data_processing.js
+- website/
+    - index.html
+    - marble.jpg
+    - script.js
+    - server.js
+    - style.js
 - tests/
 - config.json
+- run.sh
 
 # Naming
 - variables in camelCase
