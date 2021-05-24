@@ -24,18 +24,17 @@ console.log(`Injecting errors in lines from: ${config.encodedFile}\nWriting erro
 rl.on('line', line => {
     line = bitErrorInjection(line);
     let buffer = "";
-
+    let indexMax = (config.burstErrorSymbolSpan * config.symbolSize);        // Maximum reach of the burst error
+    
     for (let i = 0; i < line.length; i += bitsPerBlock) {
         let block = line.slice(i, i + bitsPerBlock);
-
-        let indexMax = (config.burstErrorSymbolSpan * config.symbolSize);        // Maximum reach of the burst error
 
         // *possible* to create multible burst errors
         for (let k = 0; k < config.burstErrorAmount;) {
             let index = randomNumber(0, bitsPerBlock - 1);
 
-            let doubleSymbol = 0;                                   // Used to count the amount of index'es that have been looked, and are possible to have changed
-            const startIndex = (index % config.symbolSize);       // Starting point
+            let multiSymbol = 0;                                   // Used to count the amount of index'es that have been looked, and are possible to have changed
+            const startIndex = (index % config.symbolSize);        // Starting point
 
             // Roll if the current index-bit shall be fliped
             do {
@@ -49,19 +48,14 @@ rl.on('line', line => {
                         break;
                     }
                 }
-                doubleSymbol++;
+                multiSymbol++;
                 index++;
-                // insure we revert back, so the bust error can stretch config.burstErrorSymbolSpan Symbols
 
-                // every config.symbolSize will increment k
-                if (((doubleSymbol + startIndex) % config.symbolSize) === 0) {
+                // At the last index of a symbol increment the amount of errors inserted
+                if (((multiSymbol + startIndex) % config.symbolSize) === 0) {
                     k++;
                 }
-                // insure 'end of line' increments k
-                else if (index === bitsPerBlock - 1) {
-                    k++
-                }
-            } while (doubleSymbol + startIndex !== indexMax && index !== bitsPerBlock - 1 && k < config.burstErrorAmount);
+            } while (multiSymbol + startIndex !== indexMax && index !== bitsPerBlock - 1 && k < config.burstErrorAmount);
         };
 
         buffer += block;
