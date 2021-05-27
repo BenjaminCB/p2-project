@@ -55,7 +55,7 @@ rl.on('line', line => {
                 if (((multiSymbol + startIndex) % config.symbolSize) === 0) {
                     k++;
                 }
-                else if (index !== bitsPerBlock - 1) {
+                else if (index === bitsPerBlock - 1) {
                     k++;
                 }
             } while (multiSymbol + startIndex !== indexMax && index !== bitsPerBlock - 1 && k < config.burstErrorAmount);
