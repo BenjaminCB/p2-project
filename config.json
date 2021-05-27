@@ -4,7 +4,7 @@
     "symbolSize": 4,
     "mode": "encode",
     "encoding": 8,
-    "burstErrorAmount": 2,
+    "burstErrorAmount": 1,
     "burstErrorSymbolSpan": 1,
     "burstErrorFlipChance": 3,
     "bitErrorRate": 0,
