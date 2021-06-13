@@ -178,7 +178,7 @@ function polyDerive(poly) {
                 derivedPoly[i - 1] = 0;
             }
         } else {
-            derivedPoly[i - 1] = galoisMultiply(poly[i], i);
+            derivedPoly[i - 1] = poly[i];
         }
     }
     return derivedPoly;
