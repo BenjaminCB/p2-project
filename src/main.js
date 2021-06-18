@@ -18,7 +18,7 @@ let code = setup.codeGenerator();
 
 if (config.mode === "encode") {
     // summary values
-    let totalTime = 0;
+    let timeSpentEncoding = 0;
     let lines = 0;
 
     // read and write streams
@@ -39,6 +39,9 @@ if (config.mode === "encode") {
         //convert read text-string to polynomials
         const msgs = data.strToPolys(line);
 
+        //pre encoding time
+        let t0 = performance.now();
+
         //actual encoding
         let encodedMsgs = [];
         for (let i = 0; i < 25; i++) {
@@ -54,6 +57,14 @@ if (config.mode === "encode") {
             // log the time for encoding
             totalTime += Date.now() - time;
         }
+
+        //post encoding time
+        let t1 = performance.now();
+
+        // log the time for encoding
+        timeSpentEncoding += t1 - t0;
+
+        //convert polynomials to encoded binary string
         const binaryStr = data.polysToBinaryStr(encodedMsgs);
 
         // write encoded line
@@ -63,13 +74,13 @@ if (config.mode === "encode") {
     // on close print summary
     rl.on('close', () => {
         console.log("Finished encoding\n",
-            "Total time: " + totalTime + "\n",
+            "Total time: " + timeSpentEncoding + " ms \n",
             "Number of lines: " + lines + "\n",
-            "Avg time per line: " + totalTime / lines);
+            "Avg time per line: " + timeSpentEncoding / lines + " ms");
     });
 } else if (config.mode === "decode") {
     // summary values
-    let totalTime = 0;
+    let timeSpentDecoding = 0;
     let lines = 0;
 
     // read and write streams
@@ -90,12 +101,24 @@ if (config.mode === "encode") {
         let received = data.binaryToPolys(line, config.codeSize);
         let decoded = [];
 
+        //pre decoding time
+        let t0 = performance.now();
+
         //actual decoding
         for (let i = 0; i < received.length; i++) {
             decoded[i] = decode.decodeBlock(received[i]);
         }
+
+        //post decoding time
+        let t1 = performance.now();
+
+        // log the time for decoding
+        timeSpentDecoding += t1 - t0;
+
+        // convert decoded messages to a text-string
         let str = data.polysToStr(decoded);
-        // write encoded line
+
+        // write decode line
         wl.write(str + "\n");
 
         for (let i = 0; i < 25; i++) {
@@ -116,10 +139,11 @@ if (config.mode === "encode") {
     // on close print summary
     rl.on('close', () => {
         console.log("Finished decoding\n",
-            "Total time: " + totalTime + "\n",
+            "Total time: " + timeSpentDecoding + " ms \n",
             "Number of lines: " + lines + "\n",
-            "Avg time per line: " + totalTime / lines);
+            "Avg time per line: " + timeSpentDecoding / lines + " ms");
     });
+
 } else {
     throw Error("Invalid mode of operation");
 }

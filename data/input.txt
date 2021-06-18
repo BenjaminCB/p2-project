@@ -1,1 +1,0 @@
-This is a test file which has a bunch of text to test the two implementations of reed solomon. This line has to contain at least 256 characters because that is the maximum block size that we are going to test, thus it is important to make sure to test everything propely.

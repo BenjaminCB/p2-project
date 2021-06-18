@@ -4,6 +4,7 @@ let ws = new WebSocket("ws://localhost:8080/");
 let encode = document.getElementById("EC");
 let error = document.getElementById("ERR");
 let decode = document.getElementById("DC");
+let info = document.getElementById("INFO");
 
 ws.addEventListener("open",() => {
     console.log("Connection open");
@@ -36,6 +37,18 @@ function bin2hex(data) {
     return hex;
 }
 
+function highlight(hexStr1, hexStr2) {
+    hexStr1 = hexStr1.split(" ");
+    hexStr2 = hexStr2.split(" ");
+
+    for (let i = 0; i < hexStr1.length; i++) {
+        if (hexStr1[i] !== hexStr2[i]) {
+            hexStr1[i] = "<u>" + hexStr1[i] + "</u>";
+        }
+    };
+    return hexStr1.join(" ");
+}
+
 ws.addEventListener("message", (received) => {
     let [eventType, data] = received.data.split("=");
     console.log(eventType);
@@ -43,9 +56,11 @@ ws.addEventListener("message", (received) => {
         case "encode":
             encode.innerText = bin2hex(data); break;
         case "error":
-            error.innerText = bin2hex(data); break;
+            error.innerHTML = highlight(bin2hex(data), encode.innerText); break;
         case "decode":
             decode.innerText = data; break;
+        case "info":
+            info.innerText = data; break;
         default:
             console.log("An unknown event was emmitted by the server");
     }
