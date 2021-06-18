@@ -90,7 +90,7 @@ function flip(str) {
 }
 
 // Getting a random integer between two values, inclusive
-// if max = 2 and min = 0 
+// if max = 2 and min = 0
 // possible numbers: 0,1,2
 function randomNumber(min, max) {
     return (Math.floor(Math.random() * (max - min + 1) + min));

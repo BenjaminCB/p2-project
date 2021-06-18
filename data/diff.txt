@@ -2,4 +2,8 @@
 < this is a test string
 \ No newline at end of file
 ---
+<<<<<<< HEAD
 > this is a test string
+=======
+> this is another test
+>>>>>>> 33c7a410b2cc34c929cbc13d9aaea9b6e0ebd4d9
