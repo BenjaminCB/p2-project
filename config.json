@@ -1,7 +1,7 @@
 {
     "codeSize": 15,
     "messageSize": 11,
-    "symbolSize": 4,
+    "symbolSize": 8,
     "mode": "encode",
     "encoding": 8,
     "burstErrorAmount": 1,
@@ -14,4 +14,3 @@
     "decodedFile": "data/decoded.txt",
     "infomationFile": "data/config.txt"
 }
-
